@@ -13,5 +13,6 @@ public class UserDetailsResponse {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private String joinDate;
     private Optional <String> imageUrl;
 }

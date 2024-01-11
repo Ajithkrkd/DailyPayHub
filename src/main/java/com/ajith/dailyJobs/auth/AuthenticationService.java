@@ -21,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -39,6 +41,7 @@ public class AuthenticationService {
                 .phoneNumber ( request.getPhoneNumber () )
                 .email ( request.getEmail () )
                 .password (passwordEncoder.encode (request.getPassword ()))
+                .joinDate ( Date.from ( Instant.now () ))
                 .role (  Role.USER )
                 .build ();
         User savedUser = userRepository.save ( user );

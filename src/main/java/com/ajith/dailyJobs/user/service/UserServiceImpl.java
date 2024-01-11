@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
                 userDetailsResponse.setLastName(existingUser.getLastName ());
                 userDetailsResponse.setEmail(existingUser.getEmail());
                 userDetailsResponse.setPhoneNumber ( existingUser.getPhoneNumber ());
+                userDetailsResponse.setJoinDate ( String.valueOf ( existingUser.getJoinDate () ) );
                 userDetailsResponse.setImageUrl ( Optional.ofNullable ( existingUser.getProfileImagePath ( ) ) );
                 return userDetailsResponse;
             } else {

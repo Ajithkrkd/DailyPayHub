@@ -9,7 +9,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -29,6 +31,7 @@ public class User implements UserDetails {
     private String password;
     private String profileImagePath;
     private  String phoneNumber;
+    private Date joinDate;
     private boolean isActive = true;
     @Enumerated(EnumType.STRING)
     private Role role;
