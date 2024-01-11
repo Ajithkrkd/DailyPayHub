@@ -3,6 +3,7 @@ import com.ajith.dailyJobs.auth.Exceptions.UserBlockedException;
 import com.ajith.dailyJobs.auth.Requests.AuthenticationRequest;
 import com.ajith.dailyJobs.auth.Requests.RegisterRequest;
 import com.ajith.dailyJobs.auth.Response.AuthenticationResponse;
+import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.config.JwtService;
 import com.ajith.dailyJobs.token.Token;
 import com.ajith.dailyJobs.token.TokenRepository;
@@ -10,9 +11,16 @@ import com.ajith.dailyJobs.token.TokenType;
 import com.ajith.dailyJobs.user.Role;
 import com.ajith.dailyJobs.user.entity.User;
 import com.ajith.dailyJobs.user.repository.UserRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +29,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -33,7 +43,10 @@ public class AuthenticationService {
     private  final JwtService jwtService;
     private  final AuthenticationManager authenticationManager;
     private final TokenRepository tokenRepository;
-    public AuthenticationResponse register (RegisterRequest request) {
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+    public ResponseEntity<BasicResponse> register (RegisterRequest request) {
         System.out.println (request );
         var user = User.builder ( )
                 .firstName ( request.getFirstName () )
@@ -45,15 +58,14 @@ public class AuthenticationService {
                 .role (  Role.USER )
                 .build ();
         User savedUser = userRepository.save ( user );
-        var jwtToken = jwtService.generateToken ( user );
-        var refreshToken = jwtService.generateRefreshToken ( user );
-        saveUserToken ( savedUser, refreshToken );
+        return ResponseEntity.status( HttpStatus.CREATED)
+                .body(BasicResponse.builder()
+                        .message ("User Registered successfully")
+                        .description ( "The user has been registered " )
+                        .timestamp ( LocalDateTime.now () )
+                        .status ( HttpStatus.CREATED.value ( ) )
+                        .build());
 
-
-        return AuthenticationResponse.builder ( )
-                .accessToken (jwtToken)
-                .refreshToken ( refreshToken )
-                .build ( );
     }
 
 
@@ -168,5 +180,31 @@ public class AuthenticationService {
                 .revoked ( false )
                 .build ();
         tokenRepository.save ( token );
+    }
+
+    public void  sentMailForVerification (String email, String link) throws MessagingException, UnsupportedEncodingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom("DilyPayHub@gmail.com" , "DailyPayHub");
+        helper.setTo(email);
+
+        String subject = "Here's the link to verify your email";
+        String content = "<html><body style='font-family: Arial, sans-serif;'>"
+                + "<h2 style='color: #007bff;'>Verify Your Email</h2>"
+                + "<p>Hello,</p>"
+                + "<p>You have requested to verify your email.</p>"
+                + "<p><a href='" + link + "' style='background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Click here to verify your email</a></p>"
+                + "<p>If the above link doesn't work, you can copy and paste this URL into your browser:</p>"
+                + "<p><a href='" + link + "'>" + link + "</a></p>"
+                + "<p style='color: #888;'>Ignore this email if you remember your password or if you haven't made this request.</p>"
+                + "</body></html>";
+
+
+        helper.setSubject(subject);
+
+        helper.setText(content, true);
+
+        javaMailSender.send(message);
     }
 }

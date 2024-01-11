@@ -32,6 +32,7 @@ public class User implements UserDetails {
     private String profileImagePath;
     private  String phoneNumber;
     private Date joinDate;
+    private String emailVerificationToken;
     private boolean isActive = true;
     @Enumerated(EnumType.STRING)
     private Role role;

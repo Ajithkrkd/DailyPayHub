@@ -139,6 +139,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void setTokenForVerification (String token, String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if( optionalUser.isPresent ( ) )
+        {
+            User user = optionalUser.get();
+            user.setEmailVerificationToken ( token );
+            userRepository.save ( user );
+        }
+    }
+
     private String uploadImageAndSaveImagePathToUser(MultipartFile imageFile) throws IOException {
         String rootPath = System.getProperty("user.dir");
         String uploadDir = rootPath + "/src/main/resources/static/uploads";

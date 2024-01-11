@@ -21,4 +21,6 @@ public interface UserService{
     Optional < User > findUserByName (String userName);
 
     String updateProfilePicture (String token, MultipartFile file);
+
+    void setTokenForVerification (String token, String email);
 }
