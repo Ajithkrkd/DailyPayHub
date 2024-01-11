@@ -1,12 +1,9 @@
 package com.ajith.dailyJobs.auth;
+
 import com.ajith.dailyJobs.auth.Exceptions.UserBlockedException;
 import com.ajith.dailyJobs.auth.Requests.AuthenticationRequest;
 import com.ajith.dailyJobs.auth.Requests.RegisterRequest;
 import com.ajith.dailyJobs.auth.Response.AuthenticationResponse;
-import com.ajith.dailyJobs.user.Exceptions.CustomAuthenticationException;
-import com.ajith.dailyJobs.user.Requests.UserDetailsUpdateRequest;
-import com.ajith.dailyJobs.user.Response.UserDetailsResponse;
-import com.ajith.dailyJobs.user.repository.UserRepository;
 import com.ajith.dailyJobs.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -26,7 +26,6 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
     private final UserService userService;
-    private  final UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity< AuthenticationResponse > register(@RequestBody RegisterRequest request) {
@@ -35,7 +34,7 @@ public class AuthenticationController {
             if (existEmail) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(AuthenticationResponse.builder()
-                .error("Email already exists")
+                .message ("Email already exists")
                 .build());
             }
 
@@ -45,7 +44,7 @@ public class AuthenticationController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(AuthenticationResponse.builder()
-                            .error("An error occurred during registration")
+                            .message ("An error occurred during registration")
                             .build());
         }
     }
@@ -79,30 +78,6 @@ public class AuthenticationController {
     ) throws IOException {
         System.out.println ("Refreshing token" );
         return  service.refreshToken(request, response);
-    }
-    @GetMapping ("/details")
-    public ResponseEntity<?> getUserDetails(@RequestHeader ("Authorization") String token) {
-        try {
-
-            UserDetailsResponse userDetails = userService.getUserDetails ( token.substring ( 7 ) );
-            return ResponseEntity.ok ( userDetails );
-        } catch (CustomAuthenticationException e) {
-            return ResponseEntity.status ( HttpStatus.UNAUTHORIZED ).body ( e.getMessage ( ) );
-        }
-    }
-
-
-    @PostMapping ("/update-user")
-    public ResponseEntity<?> updateUserDetails(
-            @RequestHeader ("Authorization") String token,
-            @RequestBody UserDetailsUpdateRequest userDetailsUpdateRequest
-    ){
-        try {
-            userService.updateUserDetails(token, userDetailsUpdateRequest);
-            return ResponseEntity.ok("User details updated successfully");
-        } catch (CustomAuthenticationException e) {
-            return ResponseEntity.status( HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
     }
 
 

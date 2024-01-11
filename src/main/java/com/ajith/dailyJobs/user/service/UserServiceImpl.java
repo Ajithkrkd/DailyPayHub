@@ -11,8 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
 @Service
@@ -35,6 +42,8 @@ public class UserServiceImpl implements UserService {
                 userDetailsResponse.setFirstName(existingUser.getFirstName ());
                 userDetailsResponse.setLastName(existingUser.getLastName ());
                 userDetailsResponse.setEmail(existingUser.getEmail());
+                userDetailsResponse.setPhoneNumber ( existingUser.getPhoneNumber ());
+                userDetailsResponse.setImageUrl ( Optional.ofNullable ( existingUser.getProfileImagePath ( ) ) );
                 return userDetailsResponse;
             } else {
                 throw new CustomAuthenticationException ("User not found");
@@ -52,9 +61,10 @@ public class UserServiceImpl implements UserService {
             Optional<User> optionalUser = userRepository.findByEmail(username);
             if (optionalUser.isPresent()) {
                 User existingUser = optionalUser.get();
-                existingUser.setFirstName (userDetailsUpdateRequest.getFirtName ());
+                existingUser.setFirstName (userDetailsUpdateRequest.getFirstName ());
                 existingUser.setLastName (userDetailsUpdateRequest.getLastName ());
                 existingUser.setEmail(userDetailsUpdateRequest.getEmail());
+                existingUser.setPhoneNumber ( userDetailsUpdateRequest.getPhoneNumber () );
 
 
                 if(userDetailsUpdateRequest.getPassword ().isPresent ()){System.out.println (userDetailsUpdateRequest.getPassword () +"ajith krkd");
@@ -106,5 +116,46 @@ public class UserServiceImpl implements UserService {
        return userRepository.findByEmail ( userName );
     }
 
+    @Override
+    public String updateProfilePicture(String token, MultipartFile imageFile) {
+        String userEmail = jwtService.extractUsername(token.substring(7));
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
 
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            try {
+                String fileName = uploadImageAndSaveImagePathToUser(imageFile);
+                user.setProfileImagePath ("/uploads"+"/"+fileName);
+                userRepository.save(user);
+                return fileName;
+            } catch (IOException e) {
+
+                throw new RuntimeException("Failed to upload profile picture", e);
+            }
+        } else {
+
+            throw new RuntimeException("User not found for the given email: " + userEmail);
+        }
+    }
+
+    private String uploadImageAndSaveImagePathToUser(MultipartFile imageFile) throws IOException {
+        String rootPath = System.getProperty("user.dir");
+        String uploadDir = rootPath + "/src/main/resources/static/uploads";
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String fileName = imageFile.getOriginalFilename();
+        String filePath = uploadDir + "/" + fileName;
+        Path path = Paths.get(filePath);
+
+        try {
+            Files.copy(imageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Profile picture is uploaded: " + fileName);
+            return fileName;
+        } catch (IOException e) {
+            // Handle the file copy exception
+            throw new IOException("Failed to copy profile picture file", e);
+        }
+    }
 }

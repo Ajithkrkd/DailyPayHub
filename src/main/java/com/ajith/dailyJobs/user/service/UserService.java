@@ -4,6 +4,7 @@ import com.ajith.dailyJobs.user.Requests.UserDetailsUpdateRequest;
 import com.ajith.dailyJobs.user.Response.UserDetailsResponse;
 import com.ajith.dailyJobs.user.entity.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -18,4 +19,6 @@ public interface UserService{
     boolean isEmailExist (String email);
 
     Optional < User > findUserByName (String userName);
+
+    String updateProfilePicture (String token, MultipartFile file);
 }

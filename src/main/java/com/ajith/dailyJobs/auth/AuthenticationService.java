@@ -36,9 +36,10 @@ public class AuthenticationService {
         var user = User.builder ( )
                 .firstName ( request.getFirstName () )
                 .lastName ( request.getLastName () )
+                .phoneNumber ( request.getPhoneNumber () )
                 .email ( request.getEmail () )
                 .password (passwordEncoder.encode (request.getPassword ()))
-                .role (  Role.ADMIN )
+                .role (  Role.USER )
                 .build ();
         User savedUser = userRepository.save ( user );
         var jwtToken = jwtService.generateToken ( user );
@@ -113,7 +114,7 @@ public class AuthenticationService {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return AuthenticationResponse.builder()
-                    .error ( "Invalid Authorization header" )
+                    .message ( "Invalid Authorization header" )
                     .build();
         }
 
@@ -151,7 +152,7 @@ public class AuthenticationService {
         }
 
         return AuthenticationResponse.builder()
-                .error("Token is not valid Please Login or Register")
+                .message ("Token is not valid Please Login or Register")
         .build();
     }
     private void saveUserToken (User user, String jwtToken) {

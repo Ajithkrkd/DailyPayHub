@@ -24,11 +24,11 @@ public class SecurityConfiguration {
         return http.csrf ( AbstractHttpConfigurer::disable )
 
                 .authorizeHttpRequests ( auth -> {
-                    auth.requestMatchers ( "/api/auth/**")
+                    auth.requestMatchers ( "/api/auth/**" , "/uploads/**")
                             .permitAll ( )
                             .requestMatchers ( "/api/admin/**" ).hasAuthority ( String.valueOf ( Role.ADMIN ) )
                             .requestMatchers ( "/api/users/**" ).hasAuthority ( String.valueOf ( Role.USER ) )
-                            .anyRequest ( ).authenticated ( );
+                            .anyRequest ( ).authenticated ();
 
                 } )
 

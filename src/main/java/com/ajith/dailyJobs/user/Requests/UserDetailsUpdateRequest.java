@@ -12,8 +12,9 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsUpdateRequest {
-    private String firtName;
+    private String firstName;
     private String lastName;
     private String email;
+    private String phoneNumber;
     private Optional <String> password;
 }
