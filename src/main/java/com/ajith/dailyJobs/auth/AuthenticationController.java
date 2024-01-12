@@ -14,14 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @RequestMapping ("/api/auth")
@@ -59,14 +57,16 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/verify-email")
-    public ResponseEntity<BasicResponse> verifyUserEmail(@RequestBody String email)
+    @PostMapping("/verify-email/{email}")
+    public ResponseEntity<BasicResponse> verifyUserEmail(@PathVariable String email)
             throws MessagingException, UnsupportedEncodingException {
         try {
             System.out.println (email  + "--------from here");
-            String token = "dashfuakhfdas";
+            String token = UUID.randomUUID ().toString ();
+
             userService.setTokenForVerification(token,email);
-            String verificationLink = "http://localhost:9000" + "/confirm-email?token=" + token;
+
+            String verificationLink = "http://localhost:5173" + "/confirm-email?token=" + token;
             service.sentMailForVerification (email, verificationLink );
             return ResponseEntity.status ( HttpStatus.OK )
                     .body ( BasicResponse.builder ()
@@ -92,6 +92,14 @@ public class AuthenticationController {
         }
     }
 
+
+    @PostMapping("/confirm-email/{token}/{email}")
+    public ResponseEntity<BasicResponse>confirmUserEmail(
+            @PathVariable String token,
+            @PathVariable String email)
+    {
+       return userService.cofirmEmailwithToken(token,email);
+    }
 
     @PostMapping("/authenticate")
     public ResponseEntity < ? > register(

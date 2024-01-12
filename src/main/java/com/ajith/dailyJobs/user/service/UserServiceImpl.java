@@ -1,4 +1,5 @@
 package com.ajith.dailyJobs.user.service;
+import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.config.JwtService;
 import com.ajith.dailyJobs.user.Exceptions.CustomAuthenticationException;
 import com.ajith.dailyJobs.user.Requests.UserDetailsUpdateRequest;
@@ -20,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -141,13 +143,69 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setTokenForVerification (String token, String email) {
+        System.out.println ("setTokenForVerification "+token+" "+email);
         Optional<User> optionalUser = userRepository.findByEmail(email);
+
         if( optionalUser.isPresent ( ) )
         {
+            System.out.println (optionalUser.get ().getFirstName () + "from ajith rkr=-asdfkjhasfkphjasfdosjafdoijasflpihj" );
             User user = optionalUser.get();
             user.setEmailVerificationToken ( token );
             userRepository.save ( user );
         }
+    }
+
+    @Override
+    public ResponseEntity< BasicResponse > cofirmEmailwithToken (String token, String email) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if(optionalUser.isPresent ( ) ){
+            User  userByEmail = optionalUser.get ();
+                    Optional < User > optionalTokenContainingUser = userRepository.findByEmailVerificationToken(token);
+                    if(optionalTokenContainingUser.isPresent ())
+                    {
+                        User tokenContainingUser = optionalTokenContainingUser.get ();
+                        if(userByEmail.equals ( tokenContainingUser ))
+                        {
+                            return ResponseEntity.status ( HttpStatus.OK )
+                                    .body ( BasicResponse.builder ()
+                                            .message ( "Verification Success" )
+                                            .description ( "Verification success with token user is confirmed" )
+                                            .status ( HttpStatus.OK.value ( ) )
+                                            .timestamp ( LocalDateTime.now () )
+                                            .build ()
+                                    );
+                        }
+                    }else{
+                        return ResponseEntity.status ( HttpStatus.NOT_FOUND )
+                                .body ( BasicResponse.builder ()
+                                        .message ( "Verification Failed" )
+                                        .description ( "Verification failed with token not found" )
+                                        .status ( HttpStatus.NOT_FOUND.value ( ) )
+                                        .timestamp ( LocalDateTime.now () )
+                                        .build ()
+                                );
+                    }
+        }
+        else {
+            return ResponseEntity.status ( HttpStatus.NOT_FOUND )
+                    .body ( BasicResponse.builder ()
+                            .message ( "Verification Failed" )
+                            .description ( "Verification failed with Email not found" )
+                            .status ( HttpStatus.NOT_FOUND.value ( ) )
+                            .timestamp ( LocalDateTime.now () )
+                            .build ()
+                    );
+        }
+
+        return ResponseEntity.status ( HttpStatus.INTERNAL_SERVER_ERROR )
+                .body ( BasicResponse.builder ()
+                        .message ( "Verification Failed" )
+                        .description ( "Verification failed with Server side Error " )
+                        .status ( HttpStatus.INTERNAL_SERVER_ERROR.value ( ) )
+                        .timestamp ( LocalDateTime.now () )
+                        .build ()
+                );
     }
 
     private String uploadImageAndSaveImagePathToUser(MultipartFile imageFile) throws IOException {

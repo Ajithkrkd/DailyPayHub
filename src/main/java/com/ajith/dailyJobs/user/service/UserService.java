@@ -1,5 +1,6 @@
 package com.ajith.dailyJobs.user.service;
 
+import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.user.Requests.UserDetailsUpdateRequest;
 import com.ajith.dailyJobs.user.Response.UserDetailsResponse;
 import com.ajith.dailyJobs.user.entity.User;
@@ -23,4 +24,6 @@ public interface UserService{
     String updateProfilePicture (String token, MultipartFile file);
 
     void setTokenForVerification (String token, String email);
+
+    ResponseEntity< BasicResponse > cofirmEmailwithToken (String token, String email);
 }
