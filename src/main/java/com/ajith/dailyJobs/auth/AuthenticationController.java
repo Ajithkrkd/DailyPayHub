@@ -66,7 +66,7 @@ public class AuthenticationController {
 
             userService.setTokenForVerification(token,email);
 
-            String verificationLink = "http://localhost:5173" + "/confirm-email?token=" + token;
+            String verificationLink = "http://localhost:5173" + "/login?token=" + token;
             service.sentMailForVerification (email, verificationLink );
             return ResponseEntity.status ( HttpStatus.OK )
                     .body ( BasicResponse.builder ()
@@ -101,10 +101,20 @@ public class AuthenticationController {
        return userService.cofirmEmailwithToken(token,email);
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity < ? > register(
+    @PostMapping("/authenticate/{verified}")
+    public ResponseEntity < ? > register(@PathVariable Boolean verified,
             @RequestBody AuthenticationRequest request
     ){
+
+        if(!verified)
+        {
+            return ResponseEntity.status ( HttpStatus.UNAUTHORIZED )
+                    .body ( AuthenticationResponse.builder ()
+                            .message ( "authentication failed User not verified his Email" )
+                            .accessToken ( null )
+                            .refreshToken ( null )
+                            .build ());
+        }
         try {
             AuthenticationResponse response = service.authenticate(request);
             return ResponseEntity.ok(response);
@@ -117,9 +127,17 @@ public class AuthenticationController {
         }
 
         catch (BadCredentialsException e) {
-            return ResponseEntity.status(403).body("Invalid email or password");
+            return ResponseEntity.status(403).body(
+                    AuthenticationResponse.builder ()
+                            .message ( "Invalid Email or Password" )
+                            .build ()
+            );
         }  catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    AuthenticationResponse.builder ()
+                            .message ( "Server Not Responding " )
+                            .build ()
+            );
         }
     }
 

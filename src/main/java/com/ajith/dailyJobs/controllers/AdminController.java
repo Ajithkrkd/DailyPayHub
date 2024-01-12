@@ -1,5 +1,6 @@
 package com.ajith.dailyJobs.controllers;
 
+import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,8 @@ public class AdminController {
     }
 
     @PostMapping("/blockUser/{userId}")
-    public ResponseEntity<String> makeBlockUser(@PathVariable Long userId)
+    public ResponseEntity< BasicResponse > makeBlockUser(@PathVariable Long userId)
     {
-        return userService.blockUser ( userId );
+        return  userService.blockUser ( userId );
     }
 }

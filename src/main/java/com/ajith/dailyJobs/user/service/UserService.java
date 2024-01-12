@@ -15,7 +15,7 @@ public interface UserService{
 
     void updateUserDetails (String token, UserDetailsUpdateRequest userDetailsUpdateRequest);
 
-    ResponseEntity < String > blockUser (Long userId);
+    ResponseEntity < BasicResponse > blockUser (Long userId);
 
     boolean isEmailExist (String email);
 

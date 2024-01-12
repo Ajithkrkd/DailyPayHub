@@ -92,21 +92,31 @@ public class UserServiceImpl implements UserService {
 
 
 
-    public ResponseEntity < String > blockUser(Long userId) {
+    public ResponseEntity < BasicResponse > blockUser(Long userId) {
+        BasicResponse response = new BasicResponse();
         try {
             Optional < User > optionalUser = userRepository.findById ( userId );
+
             if ( optionalUser.isPresent ( ) ) {
                 User user = optionalUser.get ( );
-                user.setIsActive ( !user.getIsActive () );
-                userRepository.save(user);
+                user.setIsActive ( !user.getIsActive ( ) );
+                userRepository.save ( user );
+                response.setStatus ( HttpStatus.OK.value ( ) );
+                response.setMessage ( user.getIsActive ( ) ? "User " + user.getFirstName ( ) + " is blocked" : "User " + user.getFirstName ( ) + " is unblocked" );
+                response.setDescription ( "user status is updated" );
+                response.setTimestamp ( LocalDateTime.now ( ) );
+                return  ResponseEntity.ok(response);
             } else {
                 throw new UsernameNotFoundException ( "User not found with id: " + userId );
+
             }
-        } catch (Exception e) {
-            throw new ResponseStatusException ( HttpStatus.INTERNAL_SERVER_ERROR, "Error blocking user", e);
+
+        }  catch(Exception e){
+            return ResponseEntity.status ( HttpStatus.INTERNAL_SERVER_ERROR )
+                    .body ( new BasicResponse ( HttpStatus.INTERNAL_SERVER_ERROR.value ( ), LocalDateTime.now ( ) , e.getMessage ( ), "An error server side"  ));
         }
-        return null;
     }
+
 
     @Override
     public boolean isEmailExist (String email) {
