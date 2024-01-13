@@ -177,6 +177,8 @@ public class UserServiceImpl implements UserService {
                         User tokenContainingUser = optionalTokenContainingUser.get ();
                         if(userByEmail.equals ( tokenContainingUser ))
                         {
+                            userByEmail.setEmailVerified ( true );
+                            userRepository.save ( userByEmail );
                             return ResponseEntity.status ( HttpStatus.OK )
                                     .body ( BasicResponse.builder ()
                                             .message ( "Verification Success" )

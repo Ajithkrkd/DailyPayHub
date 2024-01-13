@@ -1,4 +1,5 @@
 package com.ajith.dailyJobs.auth;
+import com.ajith.dailyJobs.auth.Exceptions.EmailNotVerifiedException;
 import com.ajith.dailyJobs.auth.Exceptions.UserBlockedException;
 import com.ajith.dailyJobs.auth.Requests.AuthenticationRequest;
 import com.ajith.dailyJobs.auth.Requests.RegisterRequest;
@@ -79,10 +80,16 @@ public class AuthenticationService {
                     )
             );
 
+
             var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
             if (user.getIsActive ()) {
                 throw new UserBlockedException ("User is blocked");
+            }
+            if(!user.isEmailVerified ())
+            {
+                System.out.println ("User is not----------------------------------------" );
+                throw new EmailNotVerifiedException ("email verification failed");
             }
             var jwtToken = jwtService.generateToken(user);
             var refreshToken = jwtService.generateRefreshToken ( user );
@@ -91,12 +98,13 @@ public class AuthenticationService {
             saveUserToken ( user, refreshToken );
 
 
-            return AuthenticationResponse.builder()
+            return
+                    AuthenticationResponse.builder()
                     .accessToken (jwtToken)
                     .refreshToken ( refreshToken )
                     .build();
-        } catch (BadCredentialsException e) {
-
+        }
+        catch (BadCredentialsException e) {
             throw new BadCredentialsException ("Password is Wrong");
         } catch (UsernameNotFoundException e) {
             throw new UsernameNotFoundException("User not found");
@@ -207,4 +215,6 @@ public class AuthenticationService {
 
         javaMailSender.send(message);
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.ajith.dailyJobs.auth;
 
+import com.ajith.dailyJobs.auth.Exceptions.EmailNotVerifiedException;
 import com.ajith.dailyJobs.auth.Exceptions.UserBlockedException;
 import com.ajith.dailyJobs.auth.Requests.AuthenticationRequest;
 import com.ajith.dailyJobs.auth.Requests.RegisterRequest;
@@ -101,20 +102,12 @@ public class AuthenticationController {
        return userService.cofirmEmailwithToken(token,email);
     }
 
-    @PostMapping("/authenticate/{verified}")
-    public ResponseEntity < ? > register(@PathVariable Boolean verified,
+    @PostMapping("/authenticate")
+    public ResponseEntity < ? > register(
             @RequestBody AuthenticationRequest request
     ){
 
-        if(!verified)
-        {
-            return ResponseEntity.status ( HttpStatus.UNAUTHORIZED )
-                    .body ( AuthenticationResponse.builder ()
-                            .message ( "authentication failed User not verified his Email" )
-                            .accessToken ( null )
-                            .refreshToken ( null )
-                            .build ());
-        }
+
         try {
             AuthenticationResponse response = service.authenticate(request);
             return ResponseEntity.ok(response);
@@ -124,6 +117,9 @@ public class AuthenticationController {
         }
         catch (UserBlockedException e) {
             throw new UserBlockedException ( e.getMessage() );
+        }
+        catch (EmailNotVerifiedException e){
+            throw new EmailNotVerifiedException ( e.getMessage() );
         }
 
         catch (BadCredentialsException e) {

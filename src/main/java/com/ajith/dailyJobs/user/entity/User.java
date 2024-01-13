@@ -33,6 +33,7 @@ public class User implements UserDetails {
     private  String phoneNumber;
     private Date joinDate;
     private String emailVerificationToken;
+    private boolean isEmailVerified = false;
     private boolean isActive = true;
     @Enumerated(EnumType.STRING)
     private Role role;

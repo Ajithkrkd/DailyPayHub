@@ -1,5 +1,6 @@
 package com.ajith.dailyJobs.GlobalExceptionHandler;
 
+import com.ajith.dailyJobs.auth.Exceptions.EmailNotVerifiedException;
 import com.ajith.dailyJobs.auth.Exceptions.UserBlockedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -15,11 +16,22 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler (value = {UserBlockedException.class})
     @ResponseStatus (value = HttpStatus.NOT_FOUND)
-    public ErrorMessage resourceNotFoundException(UserBlockedException ex, WebRequest request) {
+    public ErrorMessage UserBlockedException(UserBlockedException ex ,WebRequest request) {
         ErrorMessage message = new ErrorMessage();
         message.setStatus (HttpStatus.NOT_FOUND.value ());
         message.setMessage ( ex.getMessage() );
         message.setDescription ( "user is blocked try to connect with support" );
+        message.setTimestamp ( LocalDateTime.now ( ) );
+        return message;
+    }
+
+    @ExceptionHandler (value = {EmailNotVerifiedException.class})
+    @ResponseStatus (value = HttpStatus.UNAUTHORIZED)
+    public ErrorMessage EmailVerificationException(EmailNotVerifiedException ex ,WebRequest request) {
+        ErrorMessage message = new ErrorMessage();
+        message.setStatus (HttpStatus.UNAUTHORIZED.value ());
+        message.setMessage ( ex.getMessage() );
+        message.setDescription ( "user is Not verified his Email Check mail" );
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }
