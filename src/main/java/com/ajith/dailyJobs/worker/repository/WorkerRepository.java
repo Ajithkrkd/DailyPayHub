@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+
 public interface WorkerRepository extends JpaRepository< Worker,Long> {
     Optional < Worker > findByEmail(String email);
     boolean existsByEmail (String email);
