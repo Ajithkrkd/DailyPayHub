@@ -1,6 +1,6 @@
 package com.ajith.dailyJobs.config;
 
-import com.ajith.dailyJobs.user.repository.UserRepository;
+import com.ajith.dailyJobs.worker.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class ApplicationConfig {
 
-    private final UserRepository userRepository;
+    private final WorkerRepository workerRepository;
 
     @Bean
     public  PasswordEncoder passwordEncoder(){
@@ -27,8 +27,8 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService(){
-        return username -> userRepository.findByEmail ( username )
-                .orElseThrow (()->new UsernameNotFoundException ("User Not Found"));
+        return username -> workerRepository.findByEmail ( username )
+                .orElseThrow (()->new UsernameNotFoundException ("Worker Not Found"));
     }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

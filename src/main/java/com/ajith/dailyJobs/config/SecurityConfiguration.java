@@ -1,5 +1,5 @@
 package com.ajith.dailyJobs.config;
-import com.ajith.dailyJobs.user.Role;
+import com.ajith.dailyJobs.worker.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers ( WHITE_LIST_URL)
                             .permitAll ( )
                             .requestMatchers ( "/api/admin/**" ).hasAuthority ( String.valueOf ( Role.ADMIN ) )
-                            .requestMatchers ( "/api/users/**" ).hasAuthority ( String.valueOf ( Role.USER ) )
+                            .requestMatchers ( "/api/users/**" ).hasAuthority ( String.valueOf ( Role.WORKER ) )
                             .anyRequest ( ).authenticated ();
 
                 } )

@@ -1,15 +1,14 @@
-package com.ajith.dailyJobs.user.entity;
+package com.ajith.dailyJobs.worker.entity;
 
 
 import com.ajith.dailyJobs.token.Token;
-import com.ajith.dailyJobs.user.Role;
+import com.ajith.dailyJobs.worker.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table (name="_user")
-public class User implements UserDetails {
+public class Worker implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +37,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy ="user")
+    @OneToMany(mappedBy ="worker")
     private List< Token > tokens;
     @Override
     public Collection < ? extends GrantedAuthority > getAuthorities ( ) {

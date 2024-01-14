@@ -1,11 +1,11 @@
-package com.ajith.dailyJobs.user.service;
+package com.ajith.dailyJobs.worker.service;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.config.JwtService;
-import com.ajith.dailyJobs.user.Exceptions.CustomAuthenticationException;
-import com.ajith.dailyJobs.user.Requests.UserDetailsUpdateRequest;
-import com.ajith.dailyJobs.user.Response.UserDetailsResponse;
-import com.ajith.dailyJobs.user.entity.User;
-import com.ajith.dailyJobs.user.repository.UserRepository;
+import com.ajith.dailyJobs.worker.Exceptions.CustomAuthenticationException;
+import com.ajith.dailyJobs.worker.Requests.WorkerDetailsUpdateRequest;
+import com.ajith.dailyJobs.worker.Response.WorkerDetailsResponse;
+import com.ajith.dailyJobs.worker.entity.Worker;
+import com.ajith.dailyJobs.worker.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,67 +25,67 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class WorkerServiceImpl implements WorkerService {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final WorkerRepository workerRepository;
     public  final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetailsResponse getUserDetails(String token) {
+    public WorkerDetailsResponse getUserDetails(String token) {
         try {
             String userEmail = jwtService.extractUsername(token);
             String username = jwtService.extractUsername(token);
-            Optional< User > userOptional = userRepository.findByEmail(username);
+            Optional< Worker > userOptional = workerRepository.findByEmail(username);
             if (userOptional.isPresent()) {
-                User existingUser = userOptional.get();
-                UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
-                userDetailsResponse.setFirstName(existingUser.getFirstName ());
-                userDetailsResponse.setLastName(existingUser.getLastName ());
-                userDetailsResponse.setEmail(existingUser.getEmail());
-                userDetailsResponse.setPhoneNumber ( existingUser.getPhoneNumber ());
-                userDetailsResponse.setJoinDate ( String.valueOf ( existingUser.getJoinDate () ) );
-                userDetailsResponse.setImageUrl ( Optional.ofNullable ( existingUser.getProfileImagePath ( ) ) );
-                return userDetailsResponse;
+                Worker existingWorker = userOptional.get();
+                WorkerDetailsResponse workerDetailsResponse = new WorkerDetailsResponse ();
+                workerDetailsResponse.setFirstName( existingWorker.getFirstName ());
+                workerDetailsResponse.setLastName( existingWorker.getLastName ());
+                workerDetailsResponse.setEmail( existingWorker.getEmail());
+                workerDetailsResponse.setPhoneNumber ( existingWorker.getPhoneNumber ());
+                workerDetailsResponse.setJoinDate ( String.valueOf ( existingWorker.getJoinDate () ) );
+                workerDetailsResponse.setImageUrl ( Optional.ofNullable ( existingWorker.getProfileImagePath ( ) ) );
+                return workerDetailsResponse;
             } else {
-                throw new CustomAuthenticationException ("User not found");
+                throw new CustomAuthenticationException ("Worker not found");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new CustomAuthenticationException ("Error fetching user details");
+            throw new CustomAuthenticationException ("Error fetching worker details");
         }
     }
 
     @Override
-    public void updateUserDetails (String token, UserDetailsUpdateRequest userDetailsUpdateRequest) {
+    public void updateUserDetails (String token, WorkerDetailsUpdateRequest workerDetailsUpdateRequest) {
         try {
             String username = jwtService.extractUsername(token.substring ( 7 ));
-            Optional<User> optionalUser = userRepository.findByEmail(username);
+            Optional< Worker > optionalUser = workerRepository.findByEmail(username);
             if (optionalUser.isPresent()) {
-                User existingUser = optionalUser.get();
-                existingUser.setFirstName (userDetailsUpdateRequest.getFirstName ());
-                existingUser.setLastName (userDetailsUpdateRequest.getLastName ());
-                existingUser.setEmail(userDetailsUpdateRequest.getEmail());
-                existingUser.setPhoneNumber ( userDetailsUpdateRequest.getPhoneNumber () );
+                Worker existingWorker = optionalUser.get();
+                existingWorker.setFirstName ( workerDetailsUpdateRequest.getFirstName ());
+                existingWorker.setLastName ( workerDetailsUpdateRequest.getLastName ());
+                existingWorker.setEmail( workerDetailsUpdateRequest.getEmail());
+                existingWorker.setPhoneNumber ( workerDetailsUpdateRequest.getPhoneNumber () );
 
 
-                if(userDetailsUpdateRequest.getPassword ().isPresent ()){System.out.println (userDetailsUpdateRequest.getPassword () +"ajith krkd");
-                    String newPassword = userDetailsUpdateRequest.getPassword ().get();
-                    existingUser.setPassword( passwordEncoder.encode ( newPassword ) );
+                if( workerDetailsUpdateRequest.getPassword ().isPresent ()){System.out.println ( workerDetailsUpdateRequest.getPassword () +"ajith krkd");
+                    String newPassword = workerDetailsUpdateRequest.getPassword ().get();
+                    existingWorker.setPassword( passwordEncoder.encode ( newPassword ) );
                 }else {
-                    System.out.println (existingUser.getPassword () +"ajith" );
-                    existingUser.setPassword (existingUser.getPassword (  ));
+                    System.out.println ( existingWorker.getPassword () +"ajith" );
+                    existingWorker.setPassword ( existingWorker.getPassword (  ));
                 }
 
-                userRepository.save(existingUser);
+                workerRepository.save( existingWorker );
             } else {
-                // User not found
-                throw new CustomAuthenticationException ("User not found");
+                // Worker not found
+                throw new CustomAuthenticationException ("Worker not found");
             }
         } catch (Exception e) {
             // Handle exceptions and log the error
             e.printStackTrace();
-            throw new CustomAuthenticationException ("Error updating user details");
+            throw new CustomAuthenticationException ("Error updating worker details");
         }
     }
 
@@ -95,19 +94,19 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity < BasicResponse > blockUser(Long userId) {
         BasicResponse response = new BasicResponse();
         try {
-            Optional < User > optionalUser = userRepository.findById ( userId );
+            Optional < Worker > optionalUser = workerRepository.findById ( userId );
 
             if ( optionalUser.isPresent ( ) ) {
-                User user = optionalUser.get ( );
-                user.setIsActive ( !user.getIsActive ( ) );
-                userRepository.save ( user );
+                Worker worker = optionalUser.get ( );
+                worker.setIsActive ( !worker.getIsActive ( ) );
+                workerRepository.save ( worker );
                 response.setStatus ( HttpStatus.OK.value ( ) );
-                response.setMessage ( user.getIsActive ( ) ? "User " + user.getFirstName ( ) + " is blocked" : "User " + user.getFirstName ( ) + " is unblocked" );
-                response.setDescription ( "user status is updated" );
+                response.setMessage ( worker.getIsActive ( ) ? "Worker " + worker.getFirstName ( ) + " is blocked" : "Worker " + worker.getFirstName ( ) + " is unblocked" );
+                response.setDescription ( "worker status is updated" );
                 response.setTimestamp ( LocalDateTime.now ( ) );
                 return  ResponseEntity.ok(response);
             } else {
-                throw new UsernameNotFoundException ( "User not found with id: " + userId );
+                throw new UsernameNotFoundException ( "Worker not found with id: " + userId );
 
             }
 
@@ -120,26 +119,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isEmailExist (String email) {
-        return userRepository.existsByEmail ( email );
+        return workerRepository.existsByEmail ( email );
 
     }
 
     @Override
-    public Optional < User > findUserByName (String userName) {
-       return userRepository.findByEmail ( userName );
+    public Optional < Worker > findUserByName (String userName) {
+       return workerRepository.findByEmail ( userName );
     }
 
     @Override
     public String updateProfilePicture(String token, MultipartFile imageFile) {
         String userEmail = jwtService.extractUsername(token.substring(7));
-        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+        Optional< Worker > userOptional = workerRepository.findByEmail(userEmail);
 
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
+            Worker worker = userOptional.get();
             try {
                 String fileName = uploadImageAndSaveImagePathToUser(imageFile);
-                user.setProfileImagePath ("/uploads"+"/"+fileName);
-                userRepository.save(user);
+                worker.setProfileImagePath ("/uploads"+"/"+fileName);
+                workerRepository.save( worker );
                 return fileName;
             } catch (IOException e) {
 
@@ -147,42 +146,42 @@ public class UserServiceImpl implements UserService {
             }
         } else {
 
-            throw new RuntimeException("User not found for the given email: " + userEmail);
+            throw new RuntimeException("Worker not found for the given email: " + userEmail);
         }
     }
 
     @Override
     public void setTokenForVerification (String token, String email) {
         System.out.println ("setTokenForVerification "+token+" "+email);
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional< Worker > optionalUser = workerRepository.findByEmail(email);
 
         if( optionalUser.isPresent ( ) )
         {
             System.out.println (optionalUser.get ().getFirstName () + "from ajith rkr=-asdfkjhasfkphjasfdosjafdoijasflpihj" );
-            User user = optionalUser.get();
-            user.setEmailVerificationToken ( token );
-            userRepository.save ( user );
+            Worker worker = optionalUser.get();
+            worker.setEmailVerificationToken ( token );
+            workerRepository.save ( worker );
         }
     }
 
     @Override
     public ResponseEntity< BasicResponse > cofirmEmailwithToken (String token, String email) {
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional< Worker > optionalUser = workerRepository.findByEmail(email);
         if(optionalUser.isPresent ( ) ){
-            User  userByEmail = optionalUser.get ();
-                    Optional < User > optionalTokenContainingUser = userRepository.findByEmailVerificationToken(token);
+            Worker workerByEmail = optionalUser.get ();
+                    Optional < Worker > optionalTokenContainingUser = workerRepository.findByEmailVerificationToken(token);
                     if(optionalTokenContainingUser.isPresent ())
                     {
-                        User tokenContainingUser = optionalTokenContainingUser.get ();
-                        if(userByEmail.equals ( tokenContainingUser ))
+                        Worker tokenContainingWorker = optionalTokenContainingUser.get ();
+                        if( workerByEmail.equals ( tokenContainingWorker ))
                         {
-                            userByEmail.setEmailVerified ( true );
-                            userRepository.save ( userByEmail );
+                            workerByEmail.setEmailVerified ( true );
+                            workerRepository.save ( workerByEmail );
                             return ResponseEntity.status ( HttpStatus.OK )
                                     .body ( BasicResponse.builder ()
                                             .message ( "Verification Success" )
-                                            .description ( "Verification success with token user is confirmed" )
+                                            .description ( "Verification success with token worker is confirmed" )
                                             .status ( HttpStatus.OK.value ( ) )
                                             .timestamp ( LocalDateTime.now () )
                                             .build ()
@@ -221,7 +220,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private String uploadImageAndSaveImagePathToUser(MultipartFile imageFile) throws IOException {
-        String rootPath = System.getProperty("user.dir");
+        String rootPath = System.getProperty("worker.dir");
         String uploadDir = rootPath + "/src/main/resources/static/uploads";
         File dir = new File(uploadDir);
         if (!dir.exists()) {

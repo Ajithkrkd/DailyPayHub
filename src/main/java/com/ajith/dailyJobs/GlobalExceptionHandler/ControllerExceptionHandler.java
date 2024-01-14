@@ -20,7 +20,7 @@ public class ControllerExceptionHandler {
         ErrorMessage message = new ErrorMessage();
         message.setStatus (HttpStatus.NOT_FOUND.value ());
         message.setMessage ( ex.getMessage() );
-        message.setDescription ( "user is blocked try to connect with support" );
+        message.setDescription ( "worker is blocked try to connect with support" );
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }
@@ -31,7 +31,7 @@ public class ControllerExceptionHandler {
         ErrorMessage message = new ErrorMessage();
         message.setStatus (HttpStatus.UNAUTHORIZED.value ());
         message.setMessage ( ex.getMessage() );
-        message.setDescription ( "user is Not verified his Email Check mail" );
+        message.setDescription ( "worker is Not verified his Email Check mail" );
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }

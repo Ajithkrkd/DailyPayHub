@@ -1,4 +1,4 @@
-package com.ajith.dailyJobs.user;
+package com.ajith.dailyJobs.worker;
 
 
 import lombok.Getter;
@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 public enum Role {
     ADMIN,
-    USER,
+    WORKER,
 }

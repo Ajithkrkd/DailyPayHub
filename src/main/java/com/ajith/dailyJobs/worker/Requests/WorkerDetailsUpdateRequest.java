@@ -1,4 +1,4 @@
-package com.ajith.dailyJobs.user.Requests;
+package com.ajith.dailyJobs.worker.Requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.Optional;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDetailsUpdateRequest {
+public class WorkerDetailsUpdateRequest {
     private String firstName;
     private String lastName;
     private String email;

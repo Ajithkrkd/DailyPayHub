@@ -1,4 +1,4 @@
-package com.ajith.dailyJobs.user.Response;
+package com.ajith.dailyJobs.worker.Response;
 import lombok.*;
 
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UserDetailsResponse {
+public class WorkerDetailsResponse {
     private String firstName;
     private String lastName;
     private String email;

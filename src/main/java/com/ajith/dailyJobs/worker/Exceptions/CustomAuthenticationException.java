@@ -1,4 +1,4 @@
-package com.ajith.dailyJobs.user.Exceptions;
+package com.ajith.dailyJobs.worker.Exceptions;
 
 public class CustomAuthenticationException extends RuntimeException {
 

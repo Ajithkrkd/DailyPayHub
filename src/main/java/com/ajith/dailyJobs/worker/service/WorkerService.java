@@ -1,25 +1,25 @@
-package com.ajith.dailyJobs.user.service;
+package com.ajith.dailyJobs.worker.service;
 
 import com.ajith.dailyJobs.common.BasicResponse;
-import com.ajith.dailyJobs.user.Requests.UserDetailsUpdateRequest;
-import com.ajith.dailyJobs.user.Response.UserDetailsResponse;
-import com.ajith.dailyJobs.user.entity.User;
+import com.ajith.dailyJobs.worker.Requests.WorkerDetailsUpdateRequest;
+import com.ajith.dailyJobs.worker.Response.WorkerDetailsResponse;
+import com.ajith.dailyJobs.worker.entity.Worker;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
 
-public interface UserService{
-    UserDetailsResponse getUserDetails (String token);
+public interface WorkerService {
+    WorkerDetailsResponse getUserDetails (String token);
 
-    void updateUserDetails (String token, UserDetailsUpdateRequest userDetailsUpdateRequest);
+    void updateUserDetails (String token, WorkerDetailsUpdateRequest workerDetailsUpdateRequest);
 
     ResponseEntity < BasicResponse > blockUser (Long userId);
 
     boolean isEmailExist (String email);
 
-    Optional < User > findUserByName (String userName);
+    Optional < Worker > findUserByName (String userName);
 
     String updateProfilePicture (String token, MultipartFile file);
 

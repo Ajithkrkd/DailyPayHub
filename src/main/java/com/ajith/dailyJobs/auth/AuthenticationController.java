@@ -6,7 +6,7 @@ import com.ajith.dailyJobs.auth.Requests.AuthenticationRequest;
 import com.ajith.dailyJobs.auth.Requests.RegisterRequest;
 import com.ajith.dailyJobs.auth.Response.AuthenticationResponse;
 import com.ajith.dailyJobs.common.BasicResponse;
-import com.ajith.dailyJobs.user.service.UserService;
+import com.ajith.dailyJobs.worker.service.WorkerService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,12 +28,12 @@ import java.util.UUID;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-    private final UserService userService;
+    private final WorkerService workerService;
 
     @PostMapping("/register")
     public ResponseEntity< BasicResponse > register(@RequestBody RegisterRequest request) {
         try {
-            boolean existEmail = userService.isEmailExist(request.getEmail());
+            boolean existEmail = workerService.isEmailExist(request.getEmail());
             if (existEmail) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(BasicResponse.builder()
@@ -65,14 +65,14 @@ public class AuthenticationController {
             System.out.println (email  + "--------from here");
             String token = UUID.randomUUID ().toString ();
 
-            userService.setTokenForVerification(token,email);
+            workerService.setTokenForVerification(token,email);
 
             String verificationLink = "http://localhost:5173" + "/login?token=" + token;
             service.sentMailForVerification (email, verificationLink );
             return ResponseEntity.status ( HttpStatus.OK )
                     .body ( BasicResponse.builder ()
                             .message ("Email verification sent successfully")
-                            .description ( "Verification sent successfully to user email with token click to verify" )
+                            .description ( "Verification sent successfully to worker email with token click to verify" )
                             .timestamp ( LocalDateTime.now () )
                             .status ( HttpStatus.OK.value ( ) )
                             .build ());
@@ -99,7 +99,7 @@ public class AuthenticationController {
             @PathVariable String token,
             @PathVariable String email)
     {
-       return userService.cofirmEmailwithToken(token,email);
+       return workerService.cofirmEmailwithToken(token,email);
     }
 
     @PostMapping("/authenticate")
@@ -113,7 +113,7 @@ public class AuthenticationController {
             return ResponseEntity.ok(response);
         }
         catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(403).body("User not found");
+            return ResponseEntity.status(403).body("Worker not found");
         }
         catch (UserBlockedException e) {
             throw new UserBlockedException ( e.getMessage() );

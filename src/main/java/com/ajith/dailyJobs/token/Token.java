@@ -1,5 +1,5 @@
 package com.ajith.dailyJobs.token;
-import com.ajith.dailyJobs.user.entity.User;
+import com.ajith.dailyJobs.worker.entity.Worker;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +22,6 @@ public class Token {
                 private boolean revoked;
                 private boolean isRefreshToken;
         @ManyToOne
-        @JoinColumn(name = "user_id")
-                private User user;
+        @JoinColumn(name = "worker_id")
+                private Worker worker;
 }

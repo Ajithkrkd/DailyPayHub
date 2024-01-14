@@ -9,9 +9,9 @@ import com.ajith.dailyJobs.config.JwtService;
 import com.ajith.dailyJobs.token.Token;
 import com.ajith.dailyJobs.token.TokenRepository;
 import com.ajith.dailyJobs.token.TokenType;
-import com.ajith.dailyJobs.user.Role;
-import com.ajith.dailyJobs.user.entity.User;
-import com.ajith.dailyJobs.user.repository.UserRepository;
+import com.ajith.dailyJobs.worker.Role;
+import com.ajith.dailyJobs.worker.entity.Worker;
+import com.ajith.dailyJobs.worker.repository.WorkerRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserRepository userRepository;
+    private final WorkerRepository workerRepository;
     private  final PasswordEncoder passwordEncoder;
     private  final JwtService jwtService;
     private  final AuthenticationManager authenticationManager;
@@ -49,20 +49,20 @@ public class AuthenticationService {
     private JavaMailSender javaMailSender;
     public ResponseEntity<BasicResponse> register (RegisterRequest request) {
         System.out.println (request );
-        var user = User.builder ( )
+        var user = Worker.builder ( )
                 .firstName ( request.getFirstName () )
                 .lastName ( request.getLastName () )
                 .phoneNumber ( request.getPhoneNumber () )
                 .email ( request.getEmail () )
                 .password (passwordEncoder.encode (request.getPassword ()))
                 .joinDate ( Date.from ( Instant.now () ))
-                .role (  Role.USER )
+                .role (  Role.WORKER )
                 .build ();
-        User savedUser = userRepository.save ( user );
+        Worker savedWorker = workerRepository.save ( user );
         return ResponseEntity.status( HttpStatus.CREATED)
                 .body(BasicResponse.builder()
-                        .message ("User Registered successfully")
-                        .description ( "The user has been registered " )
+                        .message ("Worker Registered successfully")
+                        .description ( "The worker has been registered " )
                         .timestamp ( LocalDateTime.now () )
                         .status ( HttpStatus.CREATED.value ( ) )
                         .build());
@@ -81,14 +81,14 @@ public class AuthenticationService {
             );
 
 
-            var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            var user = workerRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("Worker not found"));
 
             if (user.getIsActive ()) {
-                throw new UserBlockedException ("User is blocked");
+                throw new UserBlockedException ("Worker is blocked");
             }
             if(!user.isEmailVerified ())
             {
-                System.out.println ("User is not----------------------------------------" );
+                System.out.println ("Worker is not----------------------------------------" );
                 throw new EmailNotVerifiedException ("email verification failed");
             }
             var jwtToken = jwtService.generateToken(user);
@@ -107,12 +107,12 @@ public class AuthenticationService {
         catch (BadCredentialsException e) {
             throw new BadCredentialsException ("Password is Wrong");
         } catch (UsernameNotFoundException e) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("Worker not found");
         }
     }
 
-    public void revokeAllTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokensByUser ( user.getId () );
+    public void revokeAllTokens(Worker worker) {
+        var validUserTokens = tokenRepository.findAllValidTokensByUser ( worker.getId () );
         if(validUserTokens.isEmpty()) {
             return;
         }
@@ -147,9 +147,9 @@ public class AuthenticationService {
 
         if(userEmail != null ){
 
-             Optional <User> existingUser = userRepository.findByEmail ( userEmail );
+             Optional < Worker > existingUser = workerRepository.findByEmail ( userEmail );
                 if(existingUser.isPresent ()){
-                    User user = existingUser.get();
+                    Worker worker = existingUser.get();
 
                     var isTokenValid = tokenRepository.findByToken ( refreshToken ).
                             map ( token -> token.isRefreshToken ( ) &&
@@ -158,12 +158,12 @@ public class AuthenticationService {
                             .orElse ( false );
 
 
-                    if(jwtService.isTokenValid ( refreshToken, user ) && isTokenValid ){
-                      var accessToken = jwtService.generateToken ( user );
-                      var newRefreshToken = jwtService.generateRefreshToken(user);
+                    if(jwtService.isTokenValid ( refreshToken, worker ) && isTokenValid ){
+                      var accessToken = jwtService.generateToken ( worker );
+                      var newRefreshToken = jwtService.generateRefreshToken( worker );
 
-                          revokeAllTokens ( user );
-                          saveUserToken ( user,newRefreshToken );
+                          revokeAllTokens ( worker );
+                          saveUserToken ( worker,newRefreshToken );
 
                           return AuthenticationResponse.builder ()
                                   .refreshToken ( newRefreshToken )
@@ -178,9 +178,9 @@ public class AuthenticationService {
                 .message ("Token is not valid Please Login or Register")
         .build();
     }
-    private void saveUserToken (User user, String jwtToken) {
+    private void saveUserToken (Worker worker, String jwtToken) {
         var token = Token.builder ( )
-                .user ( user )
+                .worker ( worker )
                 .token ( jwtToken )
                 .tokenType ( TokenType.BEARER )
                 .isRefreshToken ( true )

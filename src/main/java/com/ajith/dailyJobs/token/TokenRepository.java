@@ -12,7 +12,7 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
 
     @Query("""
             SELECT t FROM Token t 
-            WHERE t.user.id = :userId AND (t.expired = false OR t.revoked = false)
+            WHERE t.worker.id = :userId AND (t.expired = false OR t.revoked = false)
             """)
     List<Token> findAllValidTokensByUser(Long userId);
 
