@@ -9,6 +9,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @Getter
 public class WorkerDetailsResponse {
+    private Long userId;
     private String firstName;
     private String lastName;
     private String email;

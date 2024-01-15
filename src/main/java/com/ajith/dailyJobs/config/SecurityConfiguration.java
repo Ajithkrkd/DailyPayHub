@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers ( WHITE_LIST_URL)
                             .permitAll ( )
                             .requestMatchers ( "/api/admin/**" ).hasAuthority ( String.valueOf ( Role.ADMIN ) )
-                            .requestMatchers ( "/api/users/**" ).hasAuthority ( String.valueOf ( Role.WORKER ) )
+                            .requestMatchers ( "/api/worker/**" ).hasAuthority ( String.valueOf ( Role.WORKER ) )
                             .anyRequest ( ).authenticated ();
 
                 } )

@@ -1,6 +1,6 @@
 package com.ajith.dailyJobs.auth;
-import com.ajith.dailyJobs.auth.Exceptions.EmailNotVerifiedException;
-import com.ajith.dailyJobs.auth.Exceptions.UserBlockedException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.EmailNotVerifiedException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.UserBlockedException;
 import com.ajith.dailyJobs.auth.Requests.AuthenticationRequest;
 import com.ajith.dailyJobs.auth.Requests.RegisterRequest;
 import com.ajith.dailyJobs.auth.Response.AuthenticationResponse;

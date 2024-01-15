@@ -1,9 +1,9 @@
 package com.ajith.dailyJobs.GlobalExceptionHandler;
 
-import com.ajith.dailyJobs.auth.Exceptions.EmailNotVerifiedException;
-import com.ajith.dailyJobs.auth.Exceptions.UserBlockedException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.EmailNotVerifiedException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.UserBlockedException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.WorkerNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,6 +32,17 @@ public class ControllerExceptionHandler {
         message.setStatus (HttpStatus.UNAUTHORIZED.value ());
         message.setMessage ( ex.getMessage() );
         message.setDescription ( "worker is Not verified his Email Check mail" );
+        message.setTimestamp ( LocalDateTime.now ( ) );
+        return message;
+    }
+    @ExceptionHandler(value = {WorkerNotFoundException.class})
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorMessage WorkerNotFoundException(WorkerNotFoundException ex,WebRequest request)
+    {
+        ErrorMessage message = new ErrorMessage();
+        message.setStatus (HttpStatus.NOT_FOUND.value ());
+        message.setMessage ( ex.getMessage() );
+        message.setDescription ( "worker is Not Exist" );
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }

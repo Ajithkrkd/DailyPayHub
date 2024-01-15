@@ -23,6 +23,8 @@ public class Company {
     private String companyEmail;
     private String companyNumber;
     private String companyOwnerName;
+    private boolean isCompanyEmailVerified = false;
+    private String emailToken;
     private boolean isCompanyDocumentVerified = false;
 
     @OneToOne

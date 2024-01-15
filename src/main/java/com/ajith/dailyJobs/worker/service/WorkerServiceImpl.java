@@ -1,7 +1,7 @@
 package com.ajith.dailyJobs.worker.service;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.config.JwtService;
-import com.ajith.dailyJobs.worker.Exceptions.CustomAuthenticationException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CustomAuthenticationException;
 import com.ajith.dailyJobs.worker.Requests.WorkerDetailsUpdateRequest;
 import com.ajith.dailyJobs.worker.Response.WorkerDetailsResponse;
 import com.ajith.dailyJobs.worker.entity.Worker;
@@ -40,6 +40,7 @@ public class WorkerServiceImpl implements WorkerService {
             if (userOptional.isPresent()) {
                 Worker existingWorker = userOptional.get();
                 WorkerDetailsResponse workerDetailsResponse = new WorkerDetailsResponse ();
+                workerDetailsResponse.setUserId ( existingWorker.getId () );
                 workerDetailsResponse.setFirstName( existingWorker.getFirstName ());
                 workerDetailsResponse.setLastName( existingWorker.getLastName ());
                 workerDetailsResponse.setEmail( existingWorker.getEmail());

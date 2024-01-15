@@ -1,6 +1,6 @@
 package com.ajith.dailyJobs.worker.controller;
 
-import com.ajith.dailyJobs.worker.Exceptions.CustomAuthenticationException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CustomAuthenticationException;
 import com.ajith.dailyJobs.worker.Requests.WorkerDetailsUpdateRequest;
 import com.ajith.dailyJobs.worker.Response.WorkerDetailsResponse;
 import com.ajith.dailyJobs.worker.service.WorkerService;
