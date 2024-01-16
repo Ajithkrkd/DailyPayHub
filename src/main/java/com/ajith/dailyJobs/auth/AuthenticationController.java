@@ -59,12 +59,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify-email/{email}")
-    public ResponseEntity<BasicResponse> verifyUserEmail(@PathVariable String email)
+    public ResponseEntity<BasicResponse> verifyUserEmail(
+            @PathVariable String email)
             throws MessagingException, UnsupportedEncodingException {
         try {
-            System.out.println (email  + "--------from here");
             String token = UUID.randomUUID ().toString ();
-
             workerService.setTokenForVerification(token,email);
 
             String verificationLink = "http://localhost:5173" + "/login?token=" + token;
@@ -99,7 +98,7 @@ public class AuthenticationController {
             @PathVariable String token,
             @PathVariable String email)
     {
-       return workerService.cofirmEmailwithToken(token,email);
+       return workerService.confirmEmailwithToken (token,email);
     }
 
     @PostMapping("/authenticate")

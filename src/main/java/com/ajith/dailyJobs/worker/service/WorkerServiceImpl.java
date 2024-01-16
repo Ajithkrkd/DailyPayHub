@@ -1,7 +1,8 @@
 package com.ajith.dailyJobs.worker.service;
+
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.WorkerNotFoundException;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.config.JwtService;
-import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CustomAuthenticationException;
 import com.ajith.dailyJobs.worker.Requests.WorkerDetailsUpdateRequest;
 import com.ajith.dailyJobs.worker.Response.WorkerDetailsResponse;
 import com.ajith.dailyJobs.worker.entity.Worker;
@@ -32,7 +33,7 @@ public class WorkerServiceImpl implements WorkerService {
     public  final PasswordEncoder passwordEncoder;
 
     @Override
-    public WorkerDetailsResponse getUserDetails(String token) {
+    public WorkerDetailsResponse getUserDetails(String token) throws WorkerNotFoundException {
         try {
             String userEmail = jwtService.extractUsername(token);
             String username = jwtService.extractUsername(token);
@@ -49,16 +50,16 @@ public class WorkerServiceImpl implements WorkerService {
                 workerDetailsResponse.setImageUrl ( Optional.ofNullable ( existingWorker.getProfileImagePath ( ) ) );
                 return workerDetailsResponse;
             } else {
-                throw new CustomAuthenticationException ("Worker not found");
+                throw new WorkerNotFoundException ("Worker not found");
             }
-        } catch (Exception e) {
+        } catch (WorkerNotFoundException e) {
             e.printStackTrace();
-            throw new CustomAuthenticationException ("Error fetching worker details");
+            throw new WorkerNotFoundException ("Error fetching worker details");
         }
     }
 
     @Override
-    public void updateUserDetails (String token, WorkerDetailsUpdateRequest workerDetailsUpdateRequest) {
+    public void updateUserDetails (String token, WorkerDetailsUpdateRequest workerDetailsUpdateRequest) throws WorkerNotFoundException {
         try {
             String username = jwtService.extractUsername(token.substring ( 7 ));
             Optional< Worker > optionalUser = workerRepository.findByEmail(username);
@@ -80,13 +81,12 @@ public class WorkerServiceImpl implements WorkerService {
 
                 workerRepository.save( existingWorker );
             } else {
-                // Worker not found
-                throw new CustomAuthenticationException ("Worker not found");
+                throw new WorkerNotFoundException ("Worker not found");
             }
-        } catch (Exception e) {
+        } catch (WorkerNotFoundException e) {
             // Handle exceptions and log the error
             e.printStackTrace();
-            throw new CustomAuthenticationException ("Error updating worker details");
+            throw new WorkerNotFoundException ("Error updating worker details");
         }
     }
 
@@ -130,7 +130,7 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
-    public String updateProfilePicture(String token, MultipartFile imageFile) {
+    public String updateProfilePicture(String token, MultipartFile imageFile) throws WorkerNotFoundException {
         String userEmail = jwtService.extractUsername(token.substring(7));
         Optional< Worker > userOptional = workerRepository.findByEmail(userEmail);
 
@@ -146,8 +146,7 @@ public class WorkerServiceImpl implements WorkerService {
                 throw new RuntimeException("Failed to upload profile picture", e);
             }
         } else {
-
-            throw new RuntimeException("Worker not found for the given email: " + userEmail);
+            throw new WorkerNotFoundException ("Worker not found for the given email: " + userEmail);
         }
     }
 
@@ -166,7 +165,7 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
-    public ResponseEntity< BasicResponse > cofirmEmailwithToken (String token, String email) {
+    public ResponseEntity< BasicResponse > confirmEmailwithToken (String token, String email) {
 
         Optional< Worker > optionalUser = workerRepository.findByEmail(email);
         if(optionalUser.isPresent ( ) ){

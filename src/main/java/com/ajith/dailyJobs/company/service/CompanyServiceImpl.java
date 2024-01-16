@@ -1,5 +1,8 @@
 package com.ajith.dailyJobs.company.service;
 
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CompanyNameAlreadyExistsException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.EmailAlreadyExistsException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.EmailNotVerifiedException;
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.WorkerNotFoundException;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.company.CompanyRegisterRequest;
@@ -23,8 +26,23 @@ public class CompanyServiceImpl implements CompanyService {
     private final WorkerRepository workerRepository;
     @Override
     public ResponseEntity < BasicResponse > registerCompany (
-            CompanyRegisterRequest companyRegisterRequest ,Long workerId) throws WorkerNotFoundException {
+            CompanyRegisterRequest companyRegisterRequest ,Long workerId)
+            throws WorkerNotFoundException {
         try {
+
+            boolean existCompanyName = companyRepository.existsByCompanyName(companyRegisterRequest.getCompanyName ());
+            boolean existEmail = companyRepository.existsByCompanyEmail (companyRegisterRequest.getCompanyEmail ());
+
+            if(existCompanyName)
+            {
+                throw new CompanyNameAlreadyExistsException ("This company name already exists");
+            }
+
+            if (existEmail) {
+               throw new EmailAlreadyExistsException ("email already exists");
+            }
+
+
             Optional < Worker > existingWorker = workerRepository.findById ( workerId );
             if ( existingWorker.isPresent()) {
                 Company newCompany = getCompany ( companyRegisterRequest, existingWorker );
@@ -43,9 +61,15 @@ public class CompanyServiceImpl implements CompanyService {
                 throw new WorkerNotFoundException ( "Worker not found");
             }
         }
+        catch ( CompanyNameAlreadyExistsException e ){
+            throw new CompanyNameAlreadyExistsException ( e.getMessage() );
+        }
         catch (WorkerNotFoundException e)
         {
             throw  new WorkerNotFoundException ( "Worker not found" );
+        }
+        catch (EmailAlreadyExistsException e) {
+            throw new RuntimeException ( e );
         }
         catch ( Exception e )
         {
@@ -57,6 +81,76 @@ public class CompanyServiceImpl implements CompanyService {
                             .description ( "An Server Error occurred" )
                             .build ());
         }
+    }
+
+    @Override
+    public void setTokenForVerification (String token, String email) {
+        try{
+            Optional < Company > company = companyRepository.findByCompanyEmail (email);
+            if(company.isPresent ()) {
+                Company existingCompany = company.get ();
+                existingCompany.setEmailToken ( token );
+                companyRepository.save ( existingCompany );
+            }
+        }
+        catch (EmailNotVerifiedException e)
+        {
+            throw new EmailNotVerifiedException ( e.getMessage() );
+        }
+    }
+
+    @Override
+    public ResponseEntity < BasicResponse > confirmEmailWithToken (String token, String email) {
+        Optional< Company > optionalCompany = companyRepository.findByCompanyEmail (email);
+        if(optionalCompany.isPresent ( ) ){
+            Company companyByEmail = optionalCompany.get ();
+            Optional < Company > optionalTokenContainingCompany = companyRepository.findByEmailToken(token);
+            if(optionalTokenContainingCompany.isPresent ())
+            {
+                Company tokenContainingCompany = optionalTokenContainingCompany.get ();
+                if( companyByEmail.equals ( tokenContainingCompany ))
+                {
+                    companyByEmail.setCompanyEmailVerified ( true );
+                    companyRepository.save ( companyByEmail );
+                    return ResponseEntity.status ( HttpStatus.OK )
+                            .body ( BasicResponse.builder ()
+                                    .message ( "Verification Success" )
+                                    .description ( "Verification success with token company is confirmed" )
+                                    .status ( HttpStatus.OK.value ( ) )
+                                    .timestamp ( LocalDateTime.now () )
+                                    .build ()
+                            );
+                }
+            }else{
+                return ResponseEntity.status ( HttpStatus.NOT_FOUND )
+                        .body ( BasicResponse.builder ()
+                                .message ( "Verification Failed" )
+                                .description ( "Verification failed with token not found" )
+                                .status ( HttpStatus.NOT_FOUND.value ( ) )
+                                .timestamp ( LocalDateTime.now () )
+                                .build ()
+                        );
+            }
+        }
+        else {
+            return ResponseEntity.status ( HttpStatus.NOT_FOUND )
+                    .body ( BasicResponse.builder ()
+                            .message ( "Verification Failed" )
+                            .description ( "Verification failed with Email not found" )
+                            .status ( HttpStatus.NOT_FOUND.value ( ) )
+                            .timestamp ( LocalDateTime.now () )
+                            .build ()
+                    );
+        }
+
+        return ResponseEntity.status ( HttpStatus.INTERNAL_SERVER_ERROR )
+                .body ( BasicResponse.builder ()
+                        .message ( "Verification Failed" )
+                        .description ( "Verification failed with Server side Error " )
+                        .status ( HttpStatus.INTERNAL_SERVER_ERROR.value ( ) )
+                        .timestamp ( LocalDateTime.now () )
+                        .build ()
+                );
     }
 
     private static Company getCompany (CompanyRegisterRequest companyRegisterRequest, Optional < Worker > existingWorker) {

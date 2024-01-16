@@ -1,6 +1,6 @@
 package com.ajith.dailyJobs.worker.controller;
 
-import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CustomAuthenticationException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.WorkerNotFoundException;
 import com.ajith.dailyJobs.worker.Requests.WorkerDetailsUpdateRequest;
 import com.ajith.dailyJobs.worker.Response.WorkerDetailsResponse;
 import com.ajith.dailyJobs.worker.service.WorkerService;
@@ -22,7 +22,7 @@ public class WorkerController {
 
             WorkerDetailsResponse userDetails = workerService.getUserDetails ( token.substring ( 7 ) );
             return ResponseEntity.ok ( userDetails );
-        } catch (CustomAuthenticationException e) {
+        } catch (WorkerNotFoundException e) {
             return ResponseEntity.status ( HttpStatus.UNAUTHORIZED ).body ( e.getMessage ( ) );
         }
     }
@@ -36,7 +36,7 @@ public class WorkerController {
         try {
             workerService.updateUserDetails(token, workerDetailsUpdateRequest );
             return ResponseEntity.ok("Worker details updated successfully");
-        } catch (CustomAuthenticationException e) {
+        } catch (WorkerNotFoundException e) {
             return ResponseEntity.status( HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
@@ -44,14 +44,14 @@ public class WorkerController {
     public ResponseEntity<?> addProfilePic(
             @RequestHeader("Authorization") String token,
             @RequestParam ("file") MultipartFile file
-    ) {
+    ) throws WorkerNotFoundException {
         try {
             System.out.println (file);
             System.out.println (token);
             String fileName = workerService.updateProfilePicture(token, file);
             return ResponseEntity.ok("Profile picture updated successfully");
-        } catch (CustomAuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (WorkerNotFoundException e) {
+            throw new  WorkerNotFoundException(e.getMessage ());
         }
     }
 }
