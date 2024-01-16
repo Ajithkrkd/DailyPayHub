@@ -100,18 +100,16 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public ResponseEntity < BasicResponse > confirmEmailWithToken (String token, String email) {
-        Optional< Company > optionalCompany = companyRepository.findByCompanyEmail (email);
-        if(optionalCompany.isPresent ( ) ){
-            Company companyByEmail = optionalCompany.get ();
+    public ResponseEntity < BasicResponse > confirmEmailWithToken (String token) {
+
+
             Optional < Company > optionalTokenContainingCompany = companyRepository.findByEmailToken(token);
             if(optionalTokenContainingCompany.isPresent ())
             {
                 Company tokenContainingCompany = optionalTokenContainingCompany.get ();
-                if( companyByEmail.equals ( tokenContainingCompany ))
-                {
-                    companyByEmail.setCompanyEmailVerified ( true );
-                    companyRepository.save ( companyByEmail );
+
+                tokenContainingCompany.setCompanyEmailVerified ( true );
+                    companyRepository.save ( tokenContainingCompany );
                     return ResponseEntity.status ( HttpStatus.OK )
                             .body ( BasicResponse.builder ()
                                     .message ( "Verification Success" )
@@ -120,7 +118,7 @@ public class CompanyServiceImpl implements CompanyService {
                                     .timestamp ( LocalDateTime.now () )
                                     .build ()
                             );
-                }
+
             }else{
                 return ResponseEntity.status ( HttpStatus.NOT_FOUND )
                         .body ( BasicResponse.builder ()
@@ -131,26 +129,6 @@ public class CompanyServiceImpl implements CompanyService {
                                 .build ()
                         );
             }
-        }
-        else {
-            return ResponseEntity.status ( HttpStatus.NOT_FOUND )
-                    .body ( BasicResponse.builder ()
-                            .message ( "Verification Failed" )
-                            .description ( "Verification failed with Email not found" )
-                            .status ( HttpStatus.NOT_FOUND.value ( ) )
-                            .timestamp ( LocalDateTime.now () )
-                            .build ()
-                    );
-        }
-
-        return ResponseEntity.status ( HttpStatus.INTERNAL_SERVER_ERROR )
-                .body ( BasicResponse.builder ()
-                        .message ( "Verification Failed" )
-                        .description ( "Verification failed with Server side Error " )
-                        .status ( HttpStatus.INTERNAL_SERVER_ERROR.value ( ) )
-                        .timestamp ( LocalDateTime.now () )
-                        .build ()
-                );
     }
 
     private static Company getCompany (CompanyRegisterRequest companyRegisterRequest, Optional < Worker > existingWorker) {

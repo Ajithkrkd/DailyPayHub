@@ -14,5 +14,5 @@ public interface CompanyService {
 
     void setTokenForVerification (String token, String email);
 
-    ResponseEntity<BasicResponse> confirmEmailWithToken (String token, String email);
+    ResponseEntity<BasicResponse> confirmEmailWithToken (String token);
 }

@@ -63,12 +63,13 @@ public class CompanyController {
                             .build () );
         }
     }
-    @PostMapping("/confirm-email/{token}/{email}")
-    public ResponseEntity<BasicResponse>confirmUserEmail(
-            @PathVariable String token,
-            @PathVariable String email)
+    @PostMapping("/confirm-email/{token}")
+    public ResponseEntity<BasicResponse>confirmCompanyEmail(
+            @PathVariable String token)
     {
-        return companyService.confirmEmailWithToken (token,email);
+        return companyService.confirmEmailWithToken (token);
     }
+
+
 
 }
