@@ -1,4 +1,4 @@
-package com.ajith.dailyJobs.controllers;
+package com.ajith.dailyJobs.admin.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -232,7 +232,6 @@ public class WorkerServiceImpl implements WorkerService {
 
         try {
             Files.copy(imageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Profile picture is uploaded: " + fileName);
             return fileName;
         } catch (IOException e) {
             // Handle the file copy exception

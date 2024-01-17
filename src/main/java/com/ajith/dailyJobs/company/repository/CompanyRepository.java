@@ -13,4 +13,6 @@ public interface CompanyRepository extends JpaRepository< Company ,Integer > {
     boolean existsByCompanyEmail (String companyEmail);
 
     boolean existsByCompanyName (String companyName);
+
+    Optional< Company> findByCompanyId (Integer companyId);
 }

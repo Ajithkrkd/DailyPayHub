@@ -67,6 +67,17 @@ public class ControllerExceptionHandler {
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }
+    @ExceptionHandler(value = {CompanyNotFountException.class})
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorMessage CompanyNotFountException(CompanyNotFountException ex,WebRequest request)
+    {
+        ErrorMessage message = new ErrorMessage();
+        message.setStatus (HttpStatus.NOT_FOUND.value ());
+        message.setMessage ( ex.getMessage() );
+        message.setDescription ( "This Company is Not Valid" );
+        message.setTimestamp ( LocalDateTime.now ( ) );
+        return message;
+    }
     @ExceptionHandler(value = {InternalServerException.class})
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage InternalServerException(InternalServerException ex,WebRequest request)

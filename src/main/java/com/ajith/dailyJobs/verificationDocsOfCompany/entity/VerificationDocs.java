@@ -2,15 +2,13 @@ package com.ajith.dailyJobs.verificationDocsOfCompany.entity;
 import com.ajith.dailyJobs.company.entity.Company;
 import com.ajith.dailyJobs.verificationDocsOfCompany.enums.VerificationDocsType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class VerificationDocs {
     @Id

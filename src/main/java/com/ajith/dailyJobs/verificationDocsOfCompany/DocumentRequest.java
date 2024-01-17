@@ -1,12 +1,14 @@
 package com.ajith.dailyJobs.verificationDocsOfCompany;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class DocumentRequest {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class DocumentRequest  {
     private String documentType;
     private MultipartFile file;
 }
