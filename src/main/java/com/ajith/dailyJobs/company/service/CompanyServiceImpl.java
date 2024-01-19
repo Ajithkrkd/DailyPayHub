@@ -1,11 +1,9 @@
 package com.ajith.dailyJobs.company.service;
 
-import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CompanyNameAlreadyExistsException;
-import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.EmailAlreadyExistsException;
-import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.EmailNotVerifiedException;
-import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.WorkerNotFoundException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.*;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.company.CompanyRegisterRequest;
+import com.ajith.dailyJobs.company.Response.CompanyResponse;
 import com.ajith.dailyJobs.company.entity.Company;
 import com.ajith.dailyJobs.company.repository.CompanyRepository;
 import com.ajith.dailyJobs.worker.entity.Worker;
@@ -131,8 +129,49 @@ public class CompanyServiceImpl implements CompanyService {
             }
     }
 
+    @Override
+    public ResponseEntity < CompanyResponse > getCompanyDetailsByWorkerId (Long workerId)
+            throws WorkerNotFoundException, CompanyNotFountException, InternalServerException {
+        try {
+            Optional<Worker> optionalWorker = workerRepository.findById(workerId);
+            if (optionalWorker.isPresent()) {
+                Worker existingWorker = optionalWorker.get();
+                Optional<Company> optionalCompany = companyRepository.findByWorkerId (existingWorker.getId ());
+                if(optionalCompany.isPresent ()) {
+                    Company existingCompany = optionalCompany.get ();
+                    return  ResponseEntity.status ( HttpStatus.OK.value ( )).body (
+                            CompanyResponse
+                                    .builder ( )
+                                    .companyId ( existingCompany.getCompanyId ( ) )
+                                    .companyEmail (existingCompany.getCompanyEmail () )
+                                    .companyName ( existingCompany.getCompanyName() )
+                                    .companyOwnerName ( existingCompany.getCompanyOwnerName() )
+                                    .isCompanyDocumentVerified ( existingCompany.isCompanyDocumentVerified () )
+                                    .isCompanyEmailVerified ( existingCompany.isCompanyEmailVerified() )
+                                    .build ( ) );
+                }
+                else {
+                throw new CompanyNotFountException ( "Worker " + existingWorker.getFirstName () + "Have no company" );
+                }
+            }
+            else{
+                throw new WorkerNotFoundException ( "Worker " + workerId + "is not found");
+            }
+
+        } catch (WorkerNotFoundException e) {
+            throw new WorkerNotFoundException (e.getMessage ());
+
+        } catch (CompanyNotFountException e) {
+            throw new CompanyNotFountException ( e.getMessage () );
+        }catch (Exception e)
+        {   e.printStackTrace ();
+            throw new InternalServerException ( "server error" );
+        }
+    }
+
     private static Company getCompany (CompanyRegisterRequest companyRegisterRequest, Optional < Worker > existingWorker) {
         Worker worker = existingWorker.get();
+        System.out.println (worker.getFirstName () + "--------------------------------------- " );
         Company newCompany = new Company ( );
         newCompany.setCompanyEmail ( companyRegisterRequest.getCompanyEmail ( ) );
         newCompany.setCompanyName ( companyRegisterRequest.getCompanyName ( ) );

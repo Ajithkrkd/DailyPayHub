@@ -29,7 +29,7 @@ public class ControllerExceptionHandler {
         ErrorMessage message = new ErrorMessage();
         message.setStatus (HttpStatus.UNAUTHORIZED.value ());
         message.setMessage ( ex.getMessage() );
-        message.setDescription ( "worker is Not verified his Email Check mail" );
+        message.setDescription ( " This email is not verified yet check your mail for verification link" );
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }

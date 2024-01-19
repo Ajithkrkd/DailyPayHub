@@ -21,7 +21,7 @@ public class VerificationDocsController {
 
     private final VerificationDocsService verificationDocsService;
     private static final Logger logger = LoggerFactory.getLogger(VerificationDocsController.class);
-    @PostMapping("/documentUpload/{companyId}")
+    @RequestMapping("/documentUpload/{companyId}")
     public ResponseEntity<?> uploadDocuments(
             @RequestParam("files") List< MultipartFile > files,
             @RequestParam("documentTypes") List<String> documentTypes

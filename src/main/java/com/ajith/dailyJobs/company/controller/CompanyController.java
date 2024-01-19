@@ -1,9 +1,12 @@
 package com.ajith.dailyJobs.company.controller;
 
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CompanyNotFountException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.InternalServerException;
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.WorkerNotFoundException;
 import com.ajith.dailyJobs.auth.AuthenticationService;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.company.CompanyRegisterRequest;
+import com.ajith.dailyJobs.company.Response.CompanyResponse;
 import com.ajith.dailyJobs.company.service.CompanyService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/worker/company")
+@RequestMapping("/api/worker/company")
 @RequiredArgsConstructor
 public class CompanyController {
 
@@ -68,6 +71,12 @@ public class CompanyController {
             @PathVariable String token)
     {
         return companyService.confirmEmailWithToken (token);
+    }
+
+    @GetMapping("/details/{workerId}")
+    public ResponseEntity< CompanyResponse >getCompanyDetailsByWorkerId(@PathVariable String workerId)
+            throws CompanyNotFountException, WorkerNotFoundException, InternalServerException {
+        return companyService.getCompanyDetailsByWorkerId ( Long.valueOf ( workerId ) );
     }
 
 

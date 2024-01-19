@@ -1,6 +1,7 @@
 package com.ajith.dailyJobs.verificationDocsOfCompany.service;
 
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CompanyNotFountException;
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.EmailNotVerifiedException;
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.InternalServerException;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.company.entity.Company;
@@ -38,6 +39,10 @@ public class VerificationServiceDocsImpl implements VerificationDocsService{
                 Optional < Company > companyOptional = companyRepository.findByCompanyId(companyId);
                 if(companyOptional.isPresent()) {
                     Company existCompany = companyOptional.get ( );
+                    boolean isVerified = existCompany.isCompanyEmailVerified ();
+                    if(!isVerified) {
+                        throw new EmailNotVerifiedException ( "Your email  "+existCompany.getCompanyEmail ()+"   is not verified" );
+                    }
 
                     for (int i = 0; i < documentRequestList.size ( ); i++) {
                         System.out.println ( documentRequestList.get ( i ).getDocumentType ( ) + "----------list" + i );
@@ -66,9 +71,13 @@ public class VerificationServiceDocsImpl implements VerificationDocsService{
                 }
 
             }
+
             catch ( CompanyNotFountException  e)
             {
                 throw new CompanyNotFountException ("company not found with id " +companyId);
+            }
+            catch (EmailNotVerifiedException e){
+                throw  new EmailNotVerifiedException ( e.getMessage () );
             }
             catch (Exception e) {
                 e.printStackTrace ();
@@ -78,7 +87,7 @@ public class VerificationServiceDocsImpl implements VerificationDocsService{
     }
 
     private String uploadImageToLocalDir (MultipartFile imageFile, String documentType ,Integer companyId) throws IOException {
-           String rootPath = System.getProperty("worker.dir");
+           String rootPath = System.getProperty("user .dir");
             String uploadDir = rootPath + "/src/main/resources/static/verificationDoc/"+companyId+"/"+documentType;
             File dir = new File(uploadDir);
             if (!dir.exists()) {

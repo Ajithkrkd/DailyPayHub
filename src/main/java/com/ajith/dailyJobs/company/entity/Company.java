@@ -32,7 +32,7 @@ public class Company {
     private CompanyAddress address;
 
     @OneToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "worker_id")
     private Worker worker;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
