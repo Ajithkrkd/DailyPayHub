@@ -22,4 +22,7 @@ public class CompanyAddress {
     private String city;
     private String postalCode;
     private boolean isDeleted;
+
+    @OneToOne(mappedBy = "companyAddress")
+    private Company company;
 }

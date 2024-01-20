@@ -220,7 +220,7 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     private String uploadImageAndSaveImagePathToUser(MultipartFile imageFile) throws IOException {
-        String rootPath = System.getProperty("worker.dir");
+        String rootPath = System.getProperty("user.dir");
         String uploadDir = rootPath + "/src/main/resources/static/uploads";
         File dir = new File(uploadDir);
         if (!dir.exists()) {

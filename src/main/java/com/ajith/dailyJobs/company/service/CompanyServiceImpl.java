@@ -12,7 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -148,6 +155,8 @@ public class CompanyServiceImpl implements CompanyService {
                                     .companyOwnerName ( existingCompany.getCompanyOwnerName() )
                                     .isCompanyDocumentVerified ( existingCompany.isCompanyDocumentVerified () )
                                     .isCompanyEmailVerified ( existingCompany.isCompanyEmailVerified() )
+                                    .companyLogoUrl (existingCompany.getCompanyLogoUrl () )
+                                    .companyNumber ( existingCompany.getCompanyNumber () )
                                     .build ( ) );
                 }
                 else {
@@ -166,6 +175,50 @@ public class CompanyServiceImpl implements CompanyService {
         }catch (Exception e)
         {   e.printStackTrace ();
             throw new InternalServerException ( "server error" );
+        }
+    }
+
+    @Override
+    public void uploadCompanyLogo (MultipartFile imageFile, Long workerId) throws WorkerNotFoundException, IOException {
+        Optional<Worker> optionalWorker = workerRepository.findById ( workerId );
+
+        if (optionalWorker.isPresent()) {
+            Worker worker = optionalWorker.get();
+           Optional<Company> optionalCompany = Optional.ofNullable ( worker.getCompany ( ) );
+           if(optionalCompany.isPresent()) {
+               String fileName = uploadImageToLocalDirAndReturnFileName(imageFile);
+               Company existingCompany = worker.getCompany ();
+               existingCompany.setCompanyLogoUrl ( "/uploads/"+fileName );
+               companyRepository.save ( existingCompany );
+           }
+           else {
+               Company company = new Company();
+               String fileName = uploadImageToLocalDirAndReturnFileName(imageFile);
+               company.setCompanyLogoUrl ("/uploads/"+fileName);
+               company.setWorker ( worker );
+               companyRepository.save ( company );
+           }
+        } else {
+            throw new WorkerNotFoundException ("Worker not found for the given worker id : " + workerId);
+        }
+    }
+
+    private String uploadImageToLocalDirAndReturnFileName (MultipartFile imageFile) throws IOException {
+        String rootPath = System.getProperty ( "user.dir" );
+        String uploadDir = rootPath + "/src/main/resources/static/uploads";
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String fileName = imageFile.getOriginalFilename();
+        String filePath = uploadDir + "/" + fileName;
+        Path path = Paths.get(filePath);
+        try {
+            Files.copy(imageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException e) {
+            // Handle the file copy exception
+            throw new IOException("Failed to copy profile picture file", e);
         }
     }
 

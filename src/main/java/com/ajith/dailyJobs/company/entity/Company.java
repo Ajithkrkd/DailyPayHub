@@ -19,6 +19,7 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private Integer companyId;
+    private String  companyLogoUrl = null;
     private String companyName;
     private String companyEmail;
     private String companyNumber;
@@ -34,6 +35,10 @@ public class Company {
     @OneToOne
     @JoinColumn(name = "worker_id")
     private Worker worker;
+
+    @OneToOne
+    @JoinColumn(name = "companyAddress_id")
+    private CompanyAddress companyAddress;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private Set < VerificationDocs > verificationDocs;

@@ -54,7 +54,7 @@ public class VerificationServiceDocsImpl implements VerificationDocsService{
                         );
                         VerificationDocs verificationDocs = new VerificationDocs ( );
                         verificationDocs.setVerificationDocsType ( VerificationDocsType.valueOf ( documentRequestList.get ( i ).getDocumentType ( ) ) );
-                        verificationDocs.setVerificationDocImageURL ( "/verificationDoc/" + companyId + "/" + documentRequestList.get ( i ).getDocumentType ( ) + "/" + fileName );
+                        verificationDocs.setVerificationDocImageURL ( "/uploads/verificationDoc/" + companyId + "/" + documentRequestList.get ( i ).getDocumentType ( ) + "/" + fileName );
                         verificationDocs.setCompany ( existCompany );
                         verificationDocsRepository.save ( verificationDocs);
                     }
@@ -88,7 +88,7 @@ public class VerificationServiceDocsImpl implements VerificationDocsService{
 
     private String uploadImageToLocalDir (MultipartFile imageFile, String documentType ,Integer companyId) throws IOException {
            String rootPath = System.getProperty("user .dir");
-            String uploadDir = rootPath + "/src/main/resources/static/verificationDoc/"+companyId+"/"+documentType;
+            String uploadDir = rootPath + "/src/main/resources/static/uploads/verificationDoc/"+companyId+"/"+documentType;
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs();

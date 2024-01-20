@@ -5,8 +5,12 @@ import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.InternalServerExcep
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.WorkerNotFoundException;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.company.CompanyRegisterRequest;
+import com.ajith.dailyJobs.company.Requests.AddressRequest;
 import com.ajith.dailyJobs.company.Response.CompanyResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface CompanyService {
     ResponseEntity< BasicResponse>
@@ -20,4 +24,8 @@ public interface CompanyService {
     ResponseEntity<BasicResponse> confirmEmailWithToken (String token);
 
     ResponseEntity< CompanyResponse> getCompanyDetailsByWorkerId (Long workerId) throws WorkerNotFoundException, CompanyNotFountException, InternalServerException;
+
+    void uploadCompanyLogo (MultipartFile file, Long workerId) throws WorkerNotFoundException, IOException;
+
+
 }

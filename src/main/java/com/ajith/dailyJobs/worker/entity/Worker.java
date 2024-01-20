@@ -1,6 +1,7 @@
 package com.ajith.dailyJobs.worker.entity;
 
 
+import com.ajith.dailyJobs.company.entity.Company;
 import com.ajith.dailyJobs.token.Token;
 import com.ajith.dailyJobs.worker.Role;
 import jakarta.persistence.*;
@@ -39,6 +40,10 @@ public class Worker implements UserDetails {
 
     @OneToMany(mappedBy ="worker")
     private List< Token > tokens;
+
+    @OneToOne(mappedBy ="worker")
+    private Company company;
+
     @Override
     public Collection < ? extends GrantedAuthority > getAuthorities ( ) {
         return List.of ( new SimpleGrantedAuthority ( role.name ( ) ) );

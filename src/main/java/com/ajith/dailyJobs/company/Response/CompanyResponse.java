@@ -15,4 +15,6 @@ public class CompanyResponse {
     private String companyEmail;
     private boolean isCompanyEmailVerified;
     private boolean isCompanyDocumentVerified;
+    private String companyLogoUrl;
+    private String companyNumber;
 }
