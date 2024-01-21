@@ -1,5 +1,6 @@
 package com.ajith.dailyJobs.admin.verificationDocsType.service;
 
+import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.DuplicateVerificationDocTypeException;
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.InternalServerException;
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.VerificationDocNotFoundException;
 import com.ajith.dailyJobs.admin.verificationDocsType.Request.VerificationDocTypeUpdateRequest;
@@ -29,7 +30,10 @@ public class VerificationDocsTypeServiceImpl implements  VerificationDocsTypeSer
     @Override
     public ResponseEntity < BasicResponse > createVerificationDocsType (VerificationDocsTypeRequest request) {
         try{
-          var doc =  VerificationDocType.builder ()
+            Optional<VerificationDocType> optionalDoc = verificationDocsTypeRepository.findByDocumentTypeName(request.getDocumentTypeName ());
+          if(optionalDoc.isPresent()){
+              throw new DuplicateVerificationDocTypeException ("This DocumentType is already exist");
+          }            var doc =  VerificationDocType.builder ()
                             .documentTypeName ( request.getDocumentTypeName ( ) )
                                     .description ( request.getDescription ( ) )
                                             .createdAt ( LocalDateTime.now () )
@@ -42,6 +46,9 @@ public class VerificationDocsTypeServiceImpl implements  VerificationDocsTypeSer
                            .description ( "new verification doc type created" )
                            .message ( "verification doc created successfully" )
                    .build () );
+        }
+        catch (DuplicateVerificationDocTypeException e) {
+            throw new RuntimeException ( e );
         }
         catch ( Exception e )
         {

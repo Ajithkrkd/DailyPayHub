@@ -7,8 +7,6 @@ import com.ajith.dailyJobs.admin.verificationDocsType.Request.VerificationDocsTy
 import com.ajith.dailyJobs.admin.verificationDocsType.entity.VerificationDocType;
 import com.ajith.dailyJobs.admin.verificationDocsType.service.VerificationDocsTypeService;
 import com.ajith.dailyJobs.common.BasicResponse;
-import com.ajith.dailyJobs.verificationDocsOfCompany.service.VerificationDocsService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

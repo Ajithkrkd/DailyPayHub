@@ -8,7 +8,6 @@ import com.ajith.dailyJobs.company.entity.Company;
 import com.ajith.dailyJobs.company.repository.CompanyRepository;
 import com.ajith.dailyJobs.verificationDocsOfCompany.DocumentRequest;
 import com.ajith.dailyJobs.verificationDocsOfCompany.entity.VerificationDocs;
-import com.ajith.dailyJobs.verificationDocsOfCompany.enums.VerificationDocsType;
 import com.ajith.dailyJobs.verificationDocsOfCompany.repository.VerificationDocsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,7 +52,7 @@ public class VerificationServiceDocsImpl implements VerificationDocsService{
                                 companyId
                         );
                         VerificationDocs verificationDocs = new VerificationDocs ( );
-//                        verificationDocs.setVerificationDocType (documentRequestList.get ( i ).getDocumentType ());
+//                      verificationDocs.setVerificationDocType (documentRequestList.get ( i ).getDocumentType ());
                         verificationDocs.setVerificationDocImageURL ( "/uploads/verificationDoc/" + companyId + "/" + documentRequestList.get ( i ).getDocumentType ( ) + "/" + fileName );
                         verificationDocs.setCompany ( existCompany );
                         verificationDocsRepository.save ( verificationDocs);

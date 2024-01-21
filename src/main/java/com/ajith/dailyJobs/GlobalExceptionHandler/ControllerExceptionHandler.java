@@ -100,6 +100,17 @@ public class ControllerExceptionHandler {
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }
+    @ExceptionHandler(value = {DuplicateVerificationDocTypeException.class})
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ErrorMessage DuplicateVerificationDocTypeException (DuplicateVerificationDocTypeException ex,WebRequest request)
+    {
+        ErrorMessage message = new ErrorMessage();
+        message.setStatus (HttpStatus.CONFLICT.value ());
+        message.setMessage ( ex.getMessage() );
+        message.setDescription ( "verification already exist" );
+        message.setTimestamp ( LocalDateTime.now ( ) );
+        return message;
+    }
     @ExceptionHandler(value = {InternalServerException.class})
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage InternalServerException(InternalServerException ex,WebRequest request)

@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class VerificationDocsTypeRequest {
-    private String DocumentTypeName;
+    private String documentTypeName;
     private String description;
 }

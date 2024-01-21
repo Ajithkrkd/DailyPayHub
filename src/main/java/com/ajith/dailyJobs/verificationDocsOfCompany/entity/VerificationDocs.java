@@ -15,7 +15,8 @@ public class VerificationDocs {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer verificationDocId;
 
-
+    @ManyToOne
+    @JoinColumn(name = "verification_doc_type_id")
     private VerificationDocType verificationDocType;
 
     private String verificationDocImageURL;
