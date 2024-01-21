@@ -53,7 +53,7 @@ public class VerificationServiceDocsImpl implements VerificationDocsService{
                                 companyId
                         );
                         VerificationDocs verificationDocs = new VerificationDocs ( );
-                        verificationDocs.setVerificationDocsType ( VerificationDocsType.valueOf ( documentRequestList.get ( i ).getDocumentType ( ) ) );
+//                        verificationDocs.setVerificationDocType (documentRequestList.get ( i ).getDocumentType ());
                         verificationDocs.setVerificationDocImageURL ( "/uploads/verificationDoc/" + companyId + "/" + documentRequestList.get ( i ).getDocumentType ( ) + "/" + fileName );
                         verificationDocs.setCompany ( existCompany );
                         verificationDocsRepository.save ( verificationDocs);

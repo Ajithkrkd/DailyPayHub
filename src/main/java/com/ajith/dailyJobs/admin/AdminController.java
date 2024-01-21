@@ -1,4 +1,4 @@
-package com.ajith.dailyJobs.admin.controllers;
+package com.ajith.dailyJobs.admin;
 
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.worker.service.WorkerService;

@@ -1,6 +1,6 @@
 package com.ajith.dailyJobs.verificationDocsOfCompany.entity;
+import com.ajith.dailyJobs.admin.verificationDocsType.entity.VerificationDocType;
 import com.ajith.dailyJobs.company.entity.Company;
-import com.ajith.dailyJobs.verificationDocsOfCompany.enums.VerificationDocsType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,8 +15,8 @@ public class VerificationDocs {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer verificationDocId;
 
-    @Enumerated(EnumType.STRING)
-    private VerificationDocsType verificationDocsType;
+
+    private VerificationDocType verificationDocType;
 
     private String verificationDocImageURL;
 
