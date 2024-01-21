@@ -4,6 +4,7 @@ import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.CompanyNotFountExce
 import com.ajith.dailyJobs.GlobalExceptionHandler.Exceptions.InternalServerException;
 import com.ajith.dailyJobs.common.BasicResponse;
 import com.ajith.dailyJobs.company.Requests.AddressRequest;
+import com.ajith.dailyJobs.company.Response.CompanyAddressResponse;
 import com.ajith.dailyJobs.company.service.CompanyAddressService;
 import com.ajith.dailyJobs.company.service.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class CompanyAddressController {
                     BasicResponse
                             .builder ()
                             .status ( HttpStatus.CREATED.value () )
-                            .timestamp ( LocalDateTime.now () )
+                            .timestamp ( LocalDateTime.now ())
                             .description ( "Company Address CREATED" )
                             .message ( "Company Address created successfully" )
                     .build () );
@@ -42,5 +43,19 @@ public class CompanyAddressController {
             e.printStackTrace ();
             throw new InternalServerException ( e.getMessage () );
         }
+    }
+
+    @GetMapping("/getCompanyAddress/{companyId}")
+    public ResponseEntity< CompanyAddressResponse > getCompanyAddress(@PathVariable String companyId) throws CompanyNotFountException,InternalServerException {
+     try{
+        return companyAddressService.getCompanyAddress( Integer.valueOf ( companyId ) );
+     }
+     catch (CompanyNotFountException e) {
+         throw new CompanyNotFountException ( e.getMessage () );
+     }
+     catch (Exception e) {
+         e.printStackTrace ();
+         throw new InternalServerException (e.getMessage ());
+     }
     }
 }

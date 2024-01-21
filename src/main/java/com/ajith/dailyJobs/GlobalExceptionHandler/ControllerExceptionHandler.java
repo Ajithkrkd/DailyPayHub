@@ -78,6 +78,17 @@ public class ControllerExceptionHandler {
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }
+    @ExceptionHandler(value = {CompanyAddressNotFountException.class})
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorMessage CompanyAddressNotFountException (CompanyAddressNotFountException ex,WebRequest request)
+    {
+        ErrorMessage message = new ErrorMessage();
+        message.setStatus (HttpStatus.NOT_FOUND.value ());
+        message.setMessage ( ex.getMessage() );
+        message.setDescription ( "company address may not fount or not exist" );
+        message.setTimestamp ( LocalDateTime.now ( ) );
+        return message;
+    }
     @ExceptionHandler(value = {InternalServerException.class})
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage InternalServerException(InternalServerException ex,WebRequest request)
@@ -89,4 +100,5 @@ public class ControllerExceptionHandler {
         message.setTimestamp ( LocalDateTime.now ( ) );
         return message;
     }
+
 }

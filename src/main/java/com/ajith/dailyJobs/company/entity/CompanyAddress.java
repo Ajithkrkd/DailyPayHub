@@ -21,8 +21,5 @@ public class CompanyAddress {
     private String district;
     private String city;
     private String postalCode;
-    private boolean isDeleted;
-
-    @OneToOne(mappedBy = "companyAddress")
-    private Company company;
+    private boolean isDeleted = false;
 }

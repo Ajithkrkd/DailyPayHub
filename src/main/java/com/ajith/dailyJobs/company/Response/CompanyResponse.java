@@ -17,4 +17,5 @@ public class CompanyResponse {
     private boolean isCompanyDocumentVerified;
     private String companyLogoUrl;
     private String companyNumber;
+    private Integer companyAddressId;
 }

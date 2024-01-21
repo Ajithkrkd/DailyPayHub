@@ -29,15 +29,11 @@ public class Company {
     private boolean isCompanyDocumentVerified = false;
 
     @OneToOne
-    @JoinColumn(name = "company_id")
-    private CompanyAddress address;
-
-    @OneToOne
     @JoinColumn(name = "worker_id")
     private Worker worker;
 
-    @OneToOne
-    @JoinColumn(name = "companyAddress_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_address_id", referencedColumnName = "addressId")
     private CompanyAddress companyAddress;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)

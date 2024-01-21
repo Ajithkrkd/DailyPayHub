@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table (name="_user")
+@Table (name="worker")
 public class Worker implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -48,10 +48,23 @@ public class CompanyServiceImpl implements CompanyService {
             }
 
 
-            Optional < Worker > existingWorker = workerRepository.findById ( workerId );
-            if ( existingWorker.isPresent()) {
-                Company newCompany = getCompany ( companyRegisterRequest, existingWorker );
-                companyRepository.save ( newCompany );
+            Optional < Worker > optionalWorker = workerRepository.findById ( workerId );
+            if ( optionalWorker.isPresent()) {
+                Worker existingWorker = optionalWorker.get ();
+                Optional<Company> optionalCompany = Optional.ofNullable ( existingWorker.getCompany ( ) );
+
+                if(optionalCompany.isPresent ()) {
+                    Company existingCompany = optionalCompany.get ();
+                    Company allDetailsUpdatedCompany = setCompanyDetailsForRegistration (
+                            companyRegisterRequest,existingCompany,existingWorker );
+                    companyRepository.save ( allDetailsUpdatedCompany );
+                }else {
+                    Company newCompany = new Company ( );
+                    Company allDetailsUpdatedCompany = setCompanyDetailsForRegistration (
+                            companyRegisterRequest,newCompany,existingWorker );
+                    companyRepository.save ( allDetailsUpdatedCompany );
+                }
+
                 return ResponseEntity.status ( HttpStatus.CREATED )
                         .body (
                                 BasicResponse
@@ -158,6 +171,7 @@ public class CompanyServiceImpl implements CompanyService {
                                     .companyLogoUrl (existingCompany.getCompanyLogoUrl () )
                                     .companyNumber ( existingCompany.getCompanyNumber () )
                                     .build ( ) );
+
                 }
                 else {
                 throw new CompanyNotFountException ( "Worker " + existingWorker.getFirstName () + "Have no company" );
@@ -222,10 +236,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
     }
 
-    private static Company getCompany (CompanyRegisterRequest companyRegisterRequest, Optional < Worker > existingWorker) {
-        Worker worker = existingWorker.get();
-        System.out.println (worker.getFirstName () + "--------------------------------------- " );
-        Company newCompany = new Company ( );
+    private static Company setCompanyDetailsForRegistration (CompanyRegisterRequest companyRegisterRequest,Company newCompany, Worker worker) {
         newCompany.setCompanyEmail ( companyRegisterRequest.getCompanyEmail ( ) );
         newCompany.setCompanyName ( companyRegisterRequest.getCompanyName ( ) );
         newCompany.setCompanyOwnerName ( companyRegisterRequest.getCompanyOwnerName ( ) );
