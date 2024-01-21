@@ -5,16 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Service
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,6 +25,8 @@ public class VerificationDocType {
     private String description;
 
     private boolean isDeleted = false;
+
+    private boolean isActive = true;
 
     private LocalDateTime createdAt;
 
