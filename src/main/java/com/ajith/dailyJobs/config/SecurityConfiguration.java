@@ -39,6 +39,7 @@ public class SecurityConfiguration {
                             .permitAll ( )
                             .requestMatchers ( "/api/admin/**" ).hasAuthority ( String.valueOf ( Role.ADMIN ) )
                             .requestMatchers ( "/api/worker/**" ).hasAuthority ( String.valueOf ( Role.WORKER ) )
+                            .requestMatchers ( "/api/common/**" ).hasAnyAuthority ( String.valueOf ( Role.ADMIN),String.valueOf ( Role.WORKER ) )
                             .anyRequest ( ).authenticated ();
 
                 } )

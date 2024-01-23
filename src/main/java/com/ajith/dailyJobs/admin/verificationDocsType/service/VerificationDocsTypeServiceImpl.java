@@ -62,7 +62,7 @@ public class VerificationDocsTypeServiceImpl implements  VerificationDocsTypeSer
     @Override
     public ResponseEntity < List < VerificationDocType > > getAllVerificationDocTypes ( ) {
        try{
-           List<VerificationDocType> verificationDocTypes = verificationDocsTypeRepository.findAll ();
+           List<VerificationDocType> verificationDocTypes = verificationDocsTypeRepository.findAllNotDeleted ();
 
            if (verificationDocTypes.isEmpty()) {
                return ResponseEntity.noContent().build();

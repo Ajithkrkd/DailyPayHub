@@ -27,11 +27,7 @@ public class VerificationDocsTypeController {
         return  verificationDocsTypeService.createVerificationDocsType(request);
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity< List < VerificationDocType > > getVerificationDocs()
-    {
-        return verificationDocsTypeService.getAllVerificationDocTypes();
-    }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<BasicResponse> updateVerificationDocType(

@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -218,6 +219,11 @@ public class WorkerServiceImpl implements WorkerService {
                         .build ()
                 );
     }
+
+    /**
+     * @return
+     */
+
 
     private String uploadImageAndSaveImagePathToUser(MultipartFile imageFile) throws IOException {
         String rootPath = System.getProperty("user.dir");
