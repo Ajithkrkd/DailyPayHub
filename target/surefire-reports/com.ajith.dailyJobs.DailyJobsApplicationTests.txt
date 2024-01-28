@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.ajith.dailyJobs.DailyJobsApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.399 s - in com.ajith.dailyJobs.DailyJobsApplicationTests
