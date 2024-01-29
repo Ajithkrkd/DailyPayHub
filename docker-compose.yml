@@ -1,6 +1,10 @@
 version: '3.8'
 
 services:
+  fornt-end:
+    image: ajithkrkd/react-app:1.0.1
+    ports:
+      - 5173:5173
   app:
     image: ajithkrkd/ecommerce-test:1.0.1
     ports:
